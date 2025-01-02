@@ -1,4 +1,4 @@
-from flask import render_template , session , redirect , request, url_for,flash
+from flask import render_template , session , redirect , request, url_for,flash 
 from shop import app,db,bcrypt
 from.forms import RegistrationForm
 from .models import User
