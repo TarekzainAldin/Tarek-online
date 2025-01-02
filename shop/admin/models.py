@@ -9,9 +9,10 @@ class User(db.Model):
     password = db.Column(db.String(180),unique=False, nullable=False)
     profile = db.Column(db.String(180), unique=False, nullable=False,default='profile.jpg')
    
-
     def __repr__(self):
         return '<User %r>' % self.username
 
 
-# db.create_all()
+
+
+db.create_all()

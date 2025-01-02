@@ -7,7 +7,7 @@ import os
 
 @app.route('/')
 def home():
-    return render_template('layout.html',title='Tarek-online')
+    return render_template('admin/index.html',title='Tarek-online')
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
@@ -16,6 +16,7 @@ def register():
         user = User(name=form.name.data, username=form.username.data, email=form.email.data,
                     password=hash_password)
         db.session.add(user)
+        db.session.commit()
         flash(f'Welcome {form.name.data}, Thanks for registering!', 'success')
         
         return redirect(url_for('home'))
