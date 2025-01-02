@@ -13,10 +13,10 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hash_password = bcrypt.generate_password_hash(form.password.data)
-        user = User(name=form.name.data,username=form.username.data, email=form.email.data,
+        user = User(name=form.name.data, username=form.username.data, email=form.email.data,
                     password=hash_password)
         db.session.add(user)
-        flash(f'welcome {form.name.data} Thanks for registering','success')
+        flash(f'Welcome {form.name.data}, Thanks for registering!', 'success')
         
         return redirect(url_for('home'))
-    return render_template('admin/register.html',title='Register user', form=form)
+    return render_template('admin/register.html', title='Register User', form=form)
