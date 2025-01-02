@@ -8,5 +8,6 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///Tarek-online.db"
 app.config["SECRET_KEY"]="TarekZainAldin1990"
 db=SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+
 from shop.admin import routes
 
