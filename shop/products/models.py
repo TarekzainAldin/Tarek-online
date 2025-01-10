@@ -7,7 +7,12 @@ class Brand(db.Model):
 
 
 class Category(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(30), unique=True, nullable=False)
+  id = db.Column(db.Integer, primary_key=True)
+  name = db.Column(db.String(30), unique=True, nullable=False)
 
-    db.create_all()
+
+  
+  
+  
+  
+db.create_all()
