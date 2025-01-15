@@ -2,11 +2,16 @@ from flask import render_template, session, redirect,request,url_for,flash
 from shop import app, db, bcrypt
 from .forms import RegistrationForm, LoginForm
 from.models import User
+from shop.products.models import Addproduct
 import os 
 
 @app.route('/admin')
 def admin():
-   return render_template('admin/index.html',title='Admin Page ')
+   if 'email' not in session:
+      flash(f'login first please','danger')
+      return redirect(url_for('login'))
+   products =Addproduct.query.all()
+   return render_template('admin/index.html',title='Admin Page ',products=products)
 @app.route('/')
 def home():
     return render_template('admin/index.html', title='Tarek-OnLine')

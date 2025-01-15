@@ -5,7 +5,7 @@
 <div class="container ">
     <div class="col-md-2"></div>
     <div class="col-md-8">
-        <h2 class="text-center ">Add Product</h2>
+        <h2 class="text-center p-4">Add Product</h2>
         {% from "_formhelpers.html" import render_field %}
         <form action="" method="POST" enctype="multipart/form-data">
             {{ render_field(form.name, class="form-control", placeholder="Product Name") }}
@@ -23,11 +23,10 @@
             <label for="category">Add Category</label>
             <select name="category" id="category" class="form-control">
                 <option value="select category"></option>
-                {%for category in categorys%}
-                <option value="{{category.id}}"> {{category.name}}</option>
-                {%endfor%}
-            </select>
-            {{ render_field(form.description, class="form-control", placeholder="Product Description", rows="10") }}
+                {% for category in categories %}
+                <option value="{{ category.id }}"> {{ category.name }}</option>
+                {% endfor %}
+            {{ render_field(form.desc, class="form-control mt-3", placeholder="Product Description", rows="10") }}
             <div class="container">
                 <div class="row">
                     <div class="col-md-4">
