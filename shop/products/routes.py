@@ -16,6 +16,39 @@ def addbrand():
     return render_template('products/addbrand.html',brands='brands')
 
 
+# @app.route('/update_brand/<int:id>',methods=['GET','POST'])
+# def update_brand(id):
+#     if 'email' not in session:
+#         flash(f'should be login first','danger')
+#         updatebrand=Brand.query.get_or_404(id)
+#         brand=request.form.get('brand')
+#         if request.method=="POST":
+#          updatebrand.name=brand
+#          flash(f'your brand has been updated','success')
+#          db.session.commit()
+#          return redirect(url_for('brands'))
+#     return render_template('products/updatebrand.html',title='UPDATE BRAND',updatebrand=updatebrand)
+
+
+@app.route('/updatebrand/<int:id>',methods=['GET','POST'])
+def updatebrand(id):
+    if 'email' not in session:
+        flash('Login first please','danger')
+       
+    updatebrand = Brand.query.get_or_404(id)
+    brand = request.form.get('brand')
+    if request.method =="POST":
+        updatebrand.name = brand
+        flash(f'The brand {updatebrand.name} was changed to {brand}','success')
+        db.session.commit()
+        return redirect(url_for('brands'))
+    brand = updatebrand.name
+    return render_template('products/updatebrand.html', title='Udate brand',updatebrand=updatebrand)
+
+
+
+
+
 @app.route('/addcat',methods=['GET','POST'])
 def addcat():
     if request.method =="POST":
@@ -28,43 +61,6 @@ def addcat():
     return render_template('products/addbrand.html', title='Add category')
 
 
-# @app.route('/updatecat/<int:id>',methods=['GET','POST'])
-# def updatecat():
-#     if email not in session:
-#         flash(f"plase login first",'danger')
-#     updatecat =Category.query.get_or_404(id)
-#     category=request.form.get('category')
-#     if request.method=='POST':
-#         updatecat.name=category
-#         flash(f"your category has been updateing {category}",'success')
-#         db.session.commit()
-#         return redirect(url_for('category'))
-#     return render_template('producs/updatebrand.html')
-
-
-# @app.route('/addproduct', methods=['GET','POST'])
-# def addproduct():
-#     form = Addproducts(request.form)
-#     brands = Brand.query.all()
-#     categories = Category.query.all()
-#     if request.method=="POST"and 'image_1' in request.files:
-#         name = form.name.data
-#         price = form.price.data
-#         discount = form.discount.data
-#         stock = form.stock.data
-#         colors = form.colors.data
-#         desc = form.discription.data   
-#         brand = request.form.get('brand')
-#         category = request.form.get('category')
-#         image_1 = photos.save(request.files.get('image_1'), name=secrets.token_hex(10) + ".")
-#         image_2 = photos.save(request.files.get('image_2'), name=secrets.token_hex(10) + ".")
-#         image_3 = photos.save(request.files.get('image_3'), name=secrets.token_hex(10) + ".")
-#         addproduct = Addproduct(name=name,price=price,discount=discount,stock=stock,colors=colors,desc=desc,category_id=category,brand_id=brand,image_1=image_1,image_2=image_2,image_3=image_3)
-#         db.session.add(addproduct)
-#         flash(f'The product {name} was added in database','success')
-#         db.session.commit()
-#         return redirect(url_for('admin'))
-#     return render_template('products/addproduct.html', form=form, title='Add a Product', brands=brands,categories=categories)
 
 
 @app.route('/addproduct', methods=['GET', 'POST'])

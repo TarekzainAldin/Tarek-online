@@ -2,8 +2,13 @@ from flask import render_template, session, redirect,request,url_for,flash
 from shop import app, db, bcrypt
 from .forms import RegistrationForm, LoginForm
 from.models import User
-from shop.products.models import Addproduct
+from shop.products.models import Addproduct,Brand,Category
 import os 
+
+@app.route('/')
+def home_page():
+    return "Welcome to the first page!"
+
 
 @app.route('/admin')
 def admin():
@@ -15,6 +20,23 @@ def admin():
 @app.route('/')
 def home():
     return render_template('admin/index.html', title='Tarek-OnLine')
+
+@app.route('/brands')
+def brands():
+    if 'email'not in session:
+       flash(f'you should be login to contenu ','danger')
+       return redirect('login')
+    brands=Brand.query.order_by(Brand.id.desc()).all()
+    return render_template('admin/brand.html' ,title="Brands",brands=brands)
+
+@app.route('/category')
+def category():
+   if 'email'not in session:
+      flash(f'your should be logiin to continue')
+      return redirect(url_for('login'))
+   categorys=Category.query.order_by(Category.id.desc()).all()
+   return render_template('admin/brand.html' ,title='Category',categorys=categorys)
+
 
 @app.route('/register',methods=['GET','POST'])
 def register():
