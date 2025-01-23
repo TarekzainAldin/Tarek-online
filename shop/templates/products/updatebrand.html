@@ -6,23 +6,23 @@
         <div class="col-md-3"></div>
         <div class="col-md-6">
 
-            {% include '_messages.html' %}
+            {% include "_messages.html" %}
 
             {% if updatebrand %}
             <h2 class="text-center mt-5">Update Brand</h2>
-            <form action="" method="post">
-                <input type="text" name="brand" class="form-control" value="{{updatebrand.name}}" required>
+            <form action="{{ url_for('updatebrand', id=updatebrand.id) }}" method="post">
+                <input type="text" name="brand" class="form-control" value="{{ updatebrand.name }}" required>
                 <input type="submit" value="Update Brand" class="btn btn-info mt-3">
-              
             </form>
-            <a href="{{url_for('brands')}}" class="btn btn-warning mt-3">Cancel</a>
-            {% else %}
+            <a href="{{ url_for('brands') }}" class="btn btn-warning mt-3">Cancel</a>
+
+            {% elif updatecat %}
             <h2 class="text-center mt-5">Update Category</h2>
-            <form action="" method="post">
-                <input type="text" class="form-control" name="category" placeholder="Enter Category Name" required value="{{updatecat.name}}">
+            <form action="{{ url_for('updatecat', id=updatecat.id) }}" method="post">
+                <input type="text" class="form-control" name="category" value="{{ updatecat.name }}" required>
                 <input type="submit" class="btn btn-info mt-3" value="Update Category">
             </form>
-             <a href="{{url_for('category')}}" class="btn btn-warning mt-3" >Cancel</a>
+            <a href="{{ url_for('category') }}" class="btn btn-warning mt-3">Cancel</a>
             {% endif %}
         </div>
         <div class="col-md-3"></div>
