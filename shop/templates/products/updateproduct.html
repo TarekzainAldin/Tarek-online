@@ -1,5 +1,6 @@
 {% extends 'layout.html' %}
 {% block content %}
+
 {% include '_messages.html' %}
 
 <div class="container mt-5">
@@ -71,13 +72,13 @@
                             <label class="form-label">Update Product Images</label>
                             <div class="row">
                                 <div class="col-md-4">
-                                   <input type="file" name="image_1" class="form-control">
+                                   {{render_field(form.image_1,class="form-control")}}
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="file" name="image_2" class="form-control">
+                                    {{render_field(form.image_2,class="form-control")}}
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="file" name="image_3" class="form-control">
+                                   {{render_field(form.image_3, class="form-control")}}
                                 </div>
                             </div>
                         </div>

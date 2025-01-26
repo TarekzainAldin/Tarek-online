@@ -1,4 +1,4 @@
-from flask import redirect ,render_template, session, url_for, flash, request
+from flask import redirect ,render_template, session, url_for, flash, request,current_app
 from shop import db , app ,photos
 from .models import Brand, Category,Addproduct
 from .forms import Addproducts
@@ -128,33 +128,63 @@ def addproduct():
         return redirect(url_for('admin'))
     return render_template('products/addproduct.html', form=form, title='Add a Product', brands=brands, categories=categories)
 
-@app.route('/updateproduct/<int:id>',methods=['GET','POST'])
+
+@app.route('/updateproduct/<int:id>', methods=['GET', 'POST'])
 def updateproduct(id):  
     product = Addproduct.query.get_or_404(id)
     brands = Brand.query.all()
     categories = Category.query.all()
-    brand=request.form.get('brand')
-    category=request.form.get('category')
-    form=Addproducts(request.form)
-    if request.method=="POST":
-        product.name=form.name.data
-        product.price=form.price.data
-        product.discount=form.discount.data
-        product.brand_id= brand
-        product.category_id=category
-        product.stock=form.stock.data
-        product.colors=form.colors.data
-        product.desc=form.desc.data
+    brand = request.form.get('brand')
+    category = request.form.get('category')
+    form = Addproducts(request.form)
+    
+    if request.method == "POST":
+        product.name = form.name.data
+        product.price = form.price.data
+        product.discount = form.discount.data
+        product.brand_id = brand
+        product.category_id = category
+        product.stock = form.stock.data
+        product.colors = form.colors.data
+        product.desc = form.desc.data
+        
+        # Handling image_1 upload
+        if request.files.get('image_1'):
+            try:  
+                os.unlink(os.path.join(current_app.root_path, "static/images", product.image_1))  # Correct path
+                product.image_1 = photos.save(request.files.get('image_1'), name=secrets.token_hex(10) + ".")
+            except Exception as e:
+                print(f"Error deleting image_1: {e}")
+                product.image_1 = photos.save(request.files.get('image_1'), name=secrets.token_hex(10) + ".")
+        
+        # Handling image_2 upload
+        if request.files.get('image_2'):
+            try:
+                os.unlink(os.path.join(current_app.root_path, "static/images", product.image_2))  # Correct path
+                product.image_2 = photos.save(request.files.get('image_2'), name=secrets.token_hex(10) + ".")
+            except Exception as e:
+                print(f"Error deleting image_2: {e}")
+                product.image_2 = photos.save(request.files.get('image_2'), name=secrets.token_hex(10) + ".")
+        
+        # Handling image_3 upload
+        if request.files.get('image_3'):
+            try:
+                os.unlink(os.path.join(current_app.root_path, "static/images", product.image_3))  # Correct path
+                product.image_3 = photos.save(request.files.get('image_3'), name=secrets.token_hex(10) + ".")
+            except Exception as e:
+                print(f"Error deleting image_3: {e}")
+                product.image_3 = photos.save(request.files.get('image_3'), name=secrets.token_hex(10) + ".")
+        
         db.session.commit()
-        flash(f'your products has been update seccesse','success')
+        flash('Your product has been updated successfully!', 'success')
         return redirect(url_for('admin'))
    
-    form.name.data=product.name
-    form.price.data=product.price
-    form.discount.data=product.discount
-    form.stock.data=product.stock
-    form.colors.data=product.colors
-    form.desc.data=product.desc 
+    form.name.data = product.name
+    form.price.data = product.price
+    form.discount.data = product.discount
+    form.stock.data = product.stock
+    form.colors.data = product.colors
+    form.desc.data = product.desc 
 
-    return render_template('products/updateproduct.html',title="updateproduct",form=form,brands=brands,categories=categories,product=product)
+    return render_template('products/updateproduct.html', title="Update Product", form=form, brands=brands, categories=categories, product=product)
 
