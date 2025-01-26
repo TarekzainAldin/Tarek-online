@@ -1,0 +1,100 @@
+{% extends 'layout.html' %}
+{% block content %}
+{% include '_messages.html' %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Card for the form -->
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="card-title mb-0">Update Product</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Form starts here -->
+                    {% from "_formhelpers.html" import render_field %}
+                    <form action="" method="POST" enctype="multipart/form-data">
+                        <!-- Product Name -->
+                        <div class="mb-3">
+                            {{ render_field(form.name, class="form-control", placeholder="Product Name") }}
+                        </div>
+
+                        <!-- Product Price and Discount -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                {{ render_field(form.price, class="form-control", placeholder="Product Price") }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ render_field(form.discount, class="form-control", placeholder="Product Discount") }}
+                            </div>
+                        </div>
+
+                        <!-- Product Stock and Colors -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                {{ render_field(form.stock, class="form-control", placeholder="Product Stock") }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ render_field(form.colors, class="form-control", placeholder="Product Colors") }}
+                            </div>
+                        </div>
+
+                        <!-- Brand Dropdown -->
+                        <div class="mb-3">
+                            <label for="brand" class="form-label">Update Brand</label>
+                            <select name="brand" id="brand" class="form-control">
+                                <option value="{{ product.brand_id }}">{{ product.brand.name }}</option>
+                                {% for brand in brands %}
+                                <option value="{{ brand.id }}">{{ brand.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Category Dropdown -->
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Update Category</label>
+                            <select name="category" id="category" class="form-control">
+                                <option value="{{ product.category_id }}">{{ product.category.name }}</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Product Description -->
+                        <div class="mb-3">
+                            {{ render_field(form.desc, class="form-control", placeholder="Product Description", rows="5") }}
+                        </div>
+
+                        <!-- Product Images -->
+                        <div class="mb-3">
+                            <label class="form-label">Update Product Images</label>
+                            <div class="row">
+                                <div class="col-md-4">
+                                   <input type="file" name="image_1" class="form-control">
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="file" name="image_2" class="form-control">
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="file" name="image_3" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Update Product</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+
+
+/////////////////////////////////////////////////////

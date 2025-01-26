@@ -1,4 +1,4 @@
-from wtforms import Form, SubmitField,IntegerField,FloatField,StringField,TextAreaField,validators
+from wtforms import Form, SubmitField,IntegerField,FloatField,StringField,TextAreaField,validators,DecimalField
 from flask_wtf.file import FileField,FileRequired,FileAllowed
 
 class Addproducts(Form):

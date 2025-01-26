@@ -3,7 +3,7 @@ from shop import db , app ,photos
 from .models import Brand, Category,Addproduct
 from .forms import Addproducts
 import secrets
-
+import os 
 @app.route('/addbrand',methods=['GET','POST'])
 def addbrand():
     if request.method =="POST":
@@ -128,8 +128,33 @@ def addproduct():
         return redirect(url_for('admin'))
     return render_template('products/addproduct.html', form=form, title='Add a Product', brands=brands, categories=categories)
 
+@app.route('/updateproduct/<int:id>',methods=['GET','POST'])
+def updateproduct(id):  
+    product = Addproduct.query.get_or_404(id)
+    brands = Brand.query.all()
+    categories = Category.query.all()
+    brand=request.form.get('brand')
+    category=request.form.get('category')
+    form=Addproducts(request.form)
+    if request.method=="POST":
+        product.name=form.name.data
+        product.price=form.price.data
+        product.discount=form.discount.data
+        product.brand_id= brand
+        product.category_id=category
+        product.stock=form.stock.data
+        product.colors=form.colors.data
+        product.desc=form.desc.data
+        db.session.commit()
+        flash(f'your products has been update seccesse','success')
+        return redirect(url_for('admin'))
+   
+    form.name.data=product.name
+    form.price.data=product.price
+    form.discount.data=product.discount
+    form.stock.data=product.stock
+    form.colors.data=product.colors
+    form.desc.data=product.desc 
 
-# @app.route('/updateprod /<int:id>',methods=['GET','POST'])
-# def updateprod(id):
-#     if 'email' not in session :
-#         redirect('url_for(login)')
+    return render_template('products/updateproduct.html',title="updateproduct",form=form,brands=brands,categories=categories,product=product)
+
