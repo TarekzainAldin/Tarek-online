@@ -2,55 +2,108 @@
 {% block content %}
 {% include '_messages.html' %}
 
-<div class="container ">
-    <div class="col-md-2"></div>
-    <div class="col-md-8">
-        <h2 class="text-center p-4">Add Product</h2>
-        {% from "_formhelpers.html" import render_field %}
-        <form action="" method="POST" enctype="multipart/form-data">
-            {{ render_field(form.name, class="form-control", placeholder="Product Name") }}
-            {{ render_field(form.price, class="form-control", placeholder="Product Price") }}
-            {{ render_field(form.discount, class="form-control", placeholder="Product Discount") }}
-            {{ render_field(form.stock, class="form-control", placeholder="Product Stock") }}
-            {{ render_field(form.colors, class="form-control", placeholder="Product Colors") }}
-            
-            <label for="brand">Add Brand</label>
-            <select name="brand" id="brand" class="form-control">
-                <option value="select brand"></option>
-                {% for brand in brands %}
-                <option value="{{ brand.id }}">{{ brand.name }}</option>
-                {% endfor %}
-            </select>
-            
-            <label for="category">Add Category</label>
-            <select name="category" id="category" class="form-control">
-                <option value="select category"></option>
-                {% for category in categories %}
-                <option value="{{ category.id }}">{{ category.name }}</option>
-                {% endfor %}
-            </select>
-            
-            {{ render_field(form.desc, class="form-control mt-3", placeholder="Product Description", rows="10") }}
-            
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-4">
-                        {{ render_field(form.image_1, class="form-control", required=True) }}
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/admin">ADMIN PANEL</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/admin">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/brands">Brands</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/category">Categories</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Manage Products
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{{ url_for('addproduct') }}">Add Product</a>
+                        <a class="dropdown-item" href="{{ url_for('addbrand') }}">Add Brand</a>
+                        <a class="dropdown-item" href="{{ url_for('addcat') }}">Add Category</a>
                     </div>
-                    <div class="col-md-4">
-                        {{ render_field(form.image_2, class="form-control", required=True) }}
-                    </div>
-                    <div class="col-md-4">
-                        {{ render_field(form.image_3, class="form-control", required=True) }}
-                       
-                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- End Navbar -->
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-info text-white text-center">
+                    <h2 class="mb-0">Add Product</h2>
+                </div>
+                <div class="card-body p-4">
+                    {% from "_formhelpers.html" import render_field %}
+                    <form action="" method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            {{ render_field(form.name, class="form-control", placeholder="Product Name") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ render_field(form.price, class="form-control", placeholder="Product Price") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ render_field(form.discount, class="form-control", placeholder="Product Discount") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ render_field(form.stock, class="form-control", placeholder="Product Stock") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ render_field(form.colors, class="form-control", placeholder="Product Colors") }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="brand" class="form-label">Add Brand</label>
+                            <select name="brand" id="brand" class="form-control">
+                                <option value="" selected disabled>Select Brand</option>
+                                {% for brand in brands %}
+                                <option value="{{ brand.id }}">{{ brand.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Add Category</label>
+                            <select name="category" id="category" class="form-control">
+                                <option value="" selected disabled>Select Category</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            {{ render_field(form.desc, class="form-control", placeholder="Product Description", rows="5") }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"> Product Images</label>
+                            <div class="row">
+                                <div class="col">
+                                    {{ render_field(form.image_1, class="form-control p-1") }}
+                                </div>
+                                <div class="col">
+                                    {{ render_field(form.image_2, class="form-control p-1") }}
+                                </div>
+                                <div class="col">
+                                    {{ render_field(form.image_3, class="form-control p-1") }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-info w-100">Add Product</button>
+                        </div>
+                    </form>
                 </div>
             </div>
-            
-            <button type="submit" class="btn btn-outline-info mt-4">Add Product</button>
-        </form>
+        </div>
     </div>
-    <div class="col-md-2"></div>
 </div>
 
 {% endblock content %}

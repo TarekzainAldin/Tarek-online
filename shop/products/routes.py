@@ -34,6 +34,16 @@ def updatebrand(id):
     brand = updatebrand.name
     return render_template('products/updatebrand.html', title='Udate brand',updatebrand=updatebrand)
 
+@app.route('/deletebrand/<int:id>', methods=['GET','POST'])
+def deletebrand(id):
+    brand = Brand.query.get_or_404(id)
+    if request.method=="POST":
+        db.session.delete(brand)
+        flash(f"The brand {brand.name} was deleted from your database","success")
+        db.session.commit()
+        return redirect(url_for('admin'))
+    flash(f"The brand {brand.name} can't be  deleted from your database","warning")
+    return redirect(url_for('admin'))
 
 
 
@@ -64,28 +74,17 @@ def updatecat(id):
         return redirect(url_for('category'))
     category = updatecat.name
     return render_template('products/updatebrand.html', title='Update cat',updatecat=updatecat)
-# @app.route('/updatecat/<int:id>', methods=['GET', 'POST'])
-# def updatecat(id):
-#     if 'email' not in session:
-#         flash('Login first please', 'danger')
-#         return redirect(url_for('login'))
 
-#     # Fetch the category by ID
-#     updatecat = Category.query.get_or_404(id)
-
-#     if request.method == "POST":
-#         # Update the category name
-#         category_name = request.form.get('category')
-#         if category_name:
-#             updatecat.name = category_name
-#             flash(f'The category {updatecat.name} was updated successfully', 'success')
-#             db.session.commit()
-            
-#             return redirect(url_for('category'))
-
-    
-#     return render_template('products/updatebrand.html', updatecat=updatecat, title='Update Category')
-
+@app.route('/deletecat/<int:id>', methods=['GET','POST'])
+def deletecat(id):
+    category = Category.query.get_or_404(id)
+    if request.method=="POST":
+        db.session.delete(category)
+        flash(f"The brand {category.name} was deleted from your database","success")
+        db.session.commit()
+        return redirect(url_for('admin'))
+    flash(f"The brand {category.name} can't be  deleted from your database","warning")
+    return redirect(url_for('admin'))
 
 
 @app.route('/addproduct', methods=['GET', 'POST'])
@@ -187,4 +186,3 @@ def updateproduct(id):
     form.desc.data = product.desc 
 
     return render_template('products/updateproduct.html', title="Update Product", form=form, brands=brands, categories=categories, product=product)
-
