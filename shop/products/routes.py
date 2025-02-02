@@ -190,23 +190,40 @@ def updateproduct(id):
 
 
 
-@app.route('/deleteproduct/<int:id>', methods=['GET', 'POST'])
-def deleteproduct(id):
-    product = Addproduct.query.get_or_404(id)  # Use Product instead of product
+# @app.route('/deleteproduct/<int:id>', methods=['GET', 'POST'])
+# def deleteproduct(id):
+#     product = Addproduct.query.get_or_404(id)  # Use Product instead of product
 
-    if request.method == 'POST':
-        try:
-            os.unlink(os.path.join(current_app.root_path, "static/images" + product.image_1))
+#     if request.method == 'POST':
+#         try:
+#             os.unlink(os.path.join(current_app.root_path, "static/images" + product.image_1))
            
-            os.unlink(os.path.join(current_app.root_path, "static/images", product.image_2))
-            os.unlink(os.path.join(current_app.root_path, "static/images" + product.image_3))
+#             os.unlink(os.path.join(current_app.root_path, "static/images", product.image_2))
+#             os.unlink(os.path.join(current_app.root_path, "static/images" + product.image_3))
+#         except Exception as e:
+#             print(e)
+
+#         db.session.delete(product)
+#         db.session.commit()
+#         flash(f'Your product "{product.name}" has been deleted', 'success')
+#         return redirect(url_for('admin'))
+
+#     flash(f'Cannot delete the product "{product.name}"', 'warning')
+#     return redirect(url_for('admin'))  # Fix typo: 'amdin' → 'admin'
+
+@app.route('/deleteproduct/<int:id>', methods=['POST'])
+def deleteproduct(id):
+    product = Addproduct.query.get_or_404(id)
+    if request.method =="POST":
+        try:
+            os.unlink(os.path.join(current_app.root_path, "static/images/" + product.image_1))
+            os.unlink(os.path.join(current_app.root_path, "static/images/" + product.image_2))
+            os.unlink(os.path.join(current_app.root_path, "static/images/" + product.image_3))
         except Exception as e:
             print(e)
-
         db.session.delete(product)
         db.session.commit()
-        flash(f'Your product "{product.name}" has been deleted', 'success')
+        flash(f'The product {product.name} was delete from your record','success')
         return redirect(url_for('admin'))
-
-    flash(f'Cannot delete the product "{product.name}"', 'warning')
-    return redirect(url_for('admin'))  # Fix typo: 'amdin' → 'admin'
+    flash(f'Can not delete the product','success')
+    return redirect(url_for('admin'))

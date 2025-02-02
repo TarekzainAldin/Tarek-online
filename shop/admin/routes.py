@@ -5,9 +5,70 @@ from.models import User
 from shop.products.models import Addproduct,Brand,Category
 import os 
 
+
+
+
 @app.route('/')
 def home_page():
-    return "Welcome to the first page!"
+    products = Addproduct.query.filter(Addproduct.stock > 0).all()
+    brands = Brand.query.join(Addproduct, (Brand.id == Addproduct.brand_id)).all()
+    categories = Category.query.join(Addproduct, (Category.id == Addproduct.category_id)).all()  # Fix `.all()`
+    
+    return render_template(
+        'products/index.html',
+        title='Product Page',
+        products=products,
+        brands=brands,
+        categories=categories  # Fix variable name
+    )
+
+@app.route('/brand/<int:id>')
+def get_brand(id):
+    brand_products = Addproduct.query.filter_by(brand_id=id).all()
+    brands = Brand.query.join(Addproduct, (Brand.id == Addproduct.brand_id)).all()
+    categories = Category.query.join(Addproduct, (Category.id == Addproduct.category_id)).all()
+    return render_template(
+        'products/index.html',
+        title='Brand Products',
+        products=brand_products,  # Ensure template expects `products`
+        brands=brands,
+        categories=Category.query.join(Addproduct, (Category.id == Addproduct.category_id)).all()  # Include categories for consistency
+    )
+
+@app.route('/categories/<int:id>')
+def get_categories(id):
+    get_cat_prod = Addproduct.query.filter_by(category_id=id).all()  # Fix typo (`guery` → `query`)
+    categories = Category.query.join(Addproduct, (Category.id == Addproduct.category_id)).all()  # Fix `.all()`
+    brands = Brand.query.join(Addproduct, (Brand.id == Addproduct.brand_id)).all()
+    return render_template(
+        'products/index.html',
+        title='Category Products',
+        products=get_cat_prod,  # Ensure template expects `products`
+        brands=Brand.query.join(Addproduct, (Brand.id == Addproduct.brand_id)).all(),  # Include brands for consistency
+        categories=categories
+    )
+
+# @app.route('/')
+# def home_page():
+#     products=Addproduct.query.filter(Addproduct.stock>0)
+#     brands = Brand.query.join(Addproduct, (Brand.id == Addproduct.brand_id)).all()
+#     categorys=Category.query.join(Addproduct,(Category.id== Addproduct.category_id)).all
+#     return render_template('products/index.html' ,title='Product page' ,products=products,brands=brands,categorys=categorys)
+
+# @app.route('/brand/<int:id>')
+# def get_brand(id):
+#    brand=Addproduct.query.filter_by(brand_id=id)
+#    brands = Brand.query.join(Addproduct, (Brand.id == Addproduct.brand_id)).all()
+#    return render_template('products/index.html',brand=brand,brands=brands)
+
+
+
+# @app.route('/categories/<int:id>')
+# def get_categories(id):
+#    get_cat_prod=Addproduct.guery.filter_by(category_id=id)
+#    categorys=Category.query.join(Addproduct,(category.id== Addproduct.category_id)).all
+#    return render_template('/products/index.html',get_cat_prod=get_cat_prod,categorys=categorys)
+
 
 
 @app.route('/admin')
