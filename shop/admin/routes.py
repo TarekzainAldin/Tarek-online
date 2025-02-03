@@ -8,45 +8,46 @@ import os
 
 
 
-@app.route('/')
-def home_page():
-    products = Addproduct.query.filter(Addproduct.stock > 0).all()
-    brands = Brand.query.join(Addproduct, (Brand.id == Addproduct.brand_id)).all()
-    categories = Category.query.join(Addproduct, (Category.id == Addproduct.category_id)).all()  # Fix `.all()`
+# @app.route('/')
+# def home_page():
+#     page=request.args.get('page',1,type=int)
+#     products = Addproduct.query.filter(Addproduct.stock > 0).paginate(page=page,per_page=1)
+#     brands = Brand.query.join(Addproduct, (Brand.id == Addproduct.brand_id)).all()
+#     categories = Category.query.join(Addproduct, (Category.id == Addproduct.category_id)).all()  # Fix `.all()`
     
-    return render_template(
-        'products/index.html',
-        title='Product Page',
-        products=products,
-        brands=brands,
-        categories=categories  # Fix variable name
-    )
+#     return render_template(
+#         'products/index.html',
+#         title='Product Page',
+#         products=products,
+#         brands=brands,
+#         categories=categories  # Fix variable name
+#     )
 
-@app.route('/brand/<int:id>')
-def get_brand(id):
-    brand_products = Addproduct.query.filter_by(brand_id=id).all()
-    brands = Brand.query.join(Addproduct, (Brand.id == Addproduct.brand_id)).all()
-    categories = Category.query.join(Addproduct, (Category.id == Addproduct.category_id)).all()
-    return render_template(
-        'products/index.html',
-        title='Brand Products',
-        products=brand_products,  # Ensure template expects `products`
-        brands=brands,
-        categories=Category.query.join(Addproduct, (Category.id == Addproduct.category_id)).all()  # Include categories for consistency
-    )
+# @app.route('/brand/<int:id>')
+# def get_brand(id):
+#     brand_products = Addproduct.query.filter_by(brand_id=id).all()
+#     brands = Brand.query.join(Addproduct, (Brand.id == Addproduct.brand_id)).all()
+#     categories = Category.query.join(Addproduct, (Category.id == Addproduct.category_id)).all()
+#     return render_template(
+#         'products/index.html',
+#         title='Brand Products',
+#         products=brand_products,  # Ensure template expects `products`
+#         brands=brands,
+#         categories=Category.query.join(Addproduct, (Category.id == Addproduct.category_id)).all()  # Include categories for consistency
+#     )
 
-@app.route('/categories/<int:id>')
-def get_categories(id):
-    get_cat_prod = Addproduct.query.filter_by(category_id=id).all()  # Fix typo (`guery` → `query`)
-    categories = Category.query.join(Addproduct, (Category.id == Addproduct.category_id)).all()  # Fix `.all()`
-    brands = Brand.query.join(Addproduct, (Brand.id == Addproduct.brand_id)).all()
-    return render_template(
-        'products/index.html',
-        title='Category Products',
-        products=get_cat_prod,  # Ensure template expects `products`
-        brands=Brand.query.join(Addproduct, (Brand.id == Addproduct.brand_id)).all(),  # Include brands for consistency
-        categories=categories
-    )
+# @app.route('/categories/<int:id>')
+# def get_categories(id):
+#     get_cat_prod = Addproduct.query.filter_by(category_id=id).all()  # Fix typo (`guery` → `query`)
+#     categories = Category.query.join(Addproduct, (Category.id == Addproduct.category_id)).all()  # Fix `.all()`
+#     brands = Brand.query.join(Addproduct, (Brand.id == Addproduct.brand_id)).all()
+#     return render_template(
+#         'products/index.html',
+#         title='Category Products',
+#         products=get_cat_prod,  # Ensure template expects `products`
+#         brands=Brand.query.join(Addproduct, (Brand.id == Addproduct.brand_id)).all(),  # Include brands for consistency
+#         categories=categories
+#     )
 
 # @app.route('/')
 # def home_page():
@@ -78,9 +79,7 @@ def admin():
       return redirect(url_for('login'))
    products =Addproduct.query.all()
    return render_template('admin/index.html',title='Admin Page ',products=products)
-@app.route('/')
-def home():
-    return render_template('admin/index.html', title='Tarek-OnLine')
+
 
 @app.route('/brands')
 def brands():
