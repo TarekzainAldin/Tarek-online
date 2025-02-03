@@ -27,4 +27,5 @@ with app.app_context():
 
 from shop.admin import routes
 from shop.products import routes
+from shop.carts import carts
 

@@ -1,0 +1,109 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#">TAREK-Online</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">All Products</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Brands</a>
+                    <ul class="dropdown-menu">
+                        {% for brand in brands %}
+                        <li><a class="dropdown-item" href="{{ url_for('get_brand', id=brand.id) }}">{{ brand.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Categories</a>
+                    <ul class="dropdown-menu">
+                        {% for category in categories %}
+                        <li><a class="dropdown-item" href="{{ url_for('get_category', id=category.id) }}">{{ category.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="{{url_for('AddCart')}}" class="nav-link">Cart ({{ session['Shoppingcart']|length }})</a>
+                </li>
+            </ul>
+            <form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Search">
+                <button class="btn btn-outline-light" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<!-- Shopping Cart -->
+<div class="container mt-5">
+    {% include '_messages.html' %}
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Color</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Discount</th>
+                    <th>Subtotal</th>
+                    <th>Update</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key, product in session['Shoppingcart'].items() %}
+                {% set discount = (product.discount/100) * product.price|float %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td><img src="{{ url_for('static', filename='images/'+ product.image) }}" alt="{{ product.name }}" class="img-thumbnail" width="50"></td>
+                    <td>{{ product.name }}</td>
+                    <form action="" method="post">
+                    <td>
+                        <select class="form-select" name="color">
+                            <option selected>{{ product.color|capitalize }}</option>
+                            {% for color in product.colors.split(',') %}
+                            {% set col = color.split(':') %}
+                            <option value="{{ col[0] }}">{{ col[0] | capitalize }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>${{ "%.2f"|format(product.price) }}</td>
+                    <td><input type="number" name="quantity" class="form-control" min="1" max="10" value="{{ product.quantity }}"></td>
+                    <td>{{ product.discount }}% ( -${{ "%.2f"|format(discount) }})</td>
+                    <td>${{ "%.2f"|format(product.quantity|int * product.price|float - discount) }}</td>
+                    <td><button type="submit" class="btn btn-sm btn-primary">Update</button></td>
+                    </form>
+                    <td><a href="" class="btn btn-sm btn-danger">Delete</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Summary -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <a href="" class="btn btn-success w-100">Order Now</a>
+        </div>
+        <div class="col-md-3 text-end">
+            <h5>Tax: ${{ tax }}</h5>
+        </div>
+        <div class="col-md-3 text-end">
+            <h5>Grand Total: ${{ grandtotal }}</h5>
+            <a href="" class="btn btn-danger btn-sm">Clear Cart</a>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
