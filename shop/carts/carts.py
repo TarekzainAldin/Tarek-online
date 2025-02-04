@@ -1,5 +1,5 @@
 from flask import render_template,session, request,redirect,url_for,flash,current_app
-from shop import db , app 
+from shop import db , app
 from shop.products.models import Addproduct
 from shop.products.routes import brands, categories
 import json
@@ -40,10 +40,11 @@ def AddCart():
         return redirect(request.referrer)
 
 
+
 @app.route('/carts')
 def getCart():
-    if 'Shoppingcart' not in session :
-        return redirect(request.referrer)
+    if 'Shoppingcart' not in session or len(session['Shoppingcart']) <= 0:
+        return redirect(url_for('home'))
     subtotal = 0
     grandtotal = 0
     for key,product in session['Shoppingcart'].items():
@@ -53,3 +54,69 @@ def getCart():
         tax =("%.2f" %(.06 * float(subtotal)))
         grandtotal = float("%.2f" % (1.06 * subtotal))
     return render_template('products/carts.html',tax=tax, grandtotal=grandtotal,brands=brands(),categories=categories())
+
+
+
+# @app.route('/updatecart/<int:code>', methods=['POST'])
+# def updatecart(code):
+#     if 'Shoppingcart' not in session or len(session['Shoppingcart']) <= 0:
+#         return redirect(url_for('home'))
+#     if request.method =="POST":
+#         quantity = request.form.get('quantity')
+#         color = request.form.get('color')
+#         try:
+#             session.modified = True
+#             for key , item in session['Shoppingcart'].items():
+#                 if int(key) == code:
+#                     item['quantity'] = quantity
+#                     item['color'] = color
+#                     flash('Item is updated!')
+#                     return redirect(url_for('getCart'))
+#         except Exception as e:
+#             print(e)
+#             return redirect(url_for('getCart'))
+
+
+@app.route('/updatecart/<int:code>', methods=['POST'])
+def updatecart(code):
+    if 'Shoppingcart' not in session or len(session['Shoppingcart']) <= 0:
+        return redirect(url_for('home'))
+    if request.method == "POST":
+        quantity = request.form.get('quantity')
+        color = request.form.get('color')
+        try:
+            session.modified = True
+            for key, item in session['Shoppingcart'].items():
+                if int(key) == code:
+                    item['quantity'] = int(quantity)  # Convert to int before updating
+                    item['color'] = color
+                    flash('Item updated successfully!', 'success')
+                    return redirect(url_for('getCart'))
+        except Exception as e:
+            print(e)
+            flash('Error updating cart.', 'danger')
+            return redirect(url_for('getCart'))
+
+            
+@app.route('/deleteitem/<int:id>')
+def deleteitem(id):
+    if 'Shoppingcart' not in session or len(session['Shoppingcart']) <= 0:
+        return redirect(url_for('home'))
+    try:
+        session.modified = True
+        for key , item in session['Shoppingcart'].items():
+            if int(key) == id:
+                session['Shoppingcart'].pop(key, None)
+                return redirect(url_for('getCart'))
+    except Exception as e:
+        print(e)
+        return redirect(url_for('getCart'))
+
+
+@app.route('/clearcart')
+def clearcart():
+    try:
+        session.pop('Shoppingcart', None)
+        return redirect(url_for('home'))
+    except Exception as e:
+        print(e)
