@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+{% block content %}
+{% include 'navbar.html' %}
+<div class="container">
+    <div class="row">
+ 
+{% for product in products %}
+<div class="col-md-3 mb-4">
+    <div class="card h-100">
+        <img src="{{ url_for('static', filename='images/' + product.image_1) }}" class="card-img-top" alt="{{ product.name }}">
+        {% if product.discount > 0 %}
+        <div class="badge-discount">Discount {{ product.discount }}%</div>
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title text-center">{{ product.name }}</h5>
+            <p class="card-text text-center">Price: ${{ product.price }}</p>
+        </div>
+        <div class="card-footer">
+            <a href="{{ url_for('single_page', id=product.id) }}" class="btn btn-primary btn-sm">Details</a>
+            <form action="{{url_for('AddCart')}}" method="post">
+                <input type="hidden" name="product_id" value="{{product.id}}">
+                <button type="submit" class="btn btn-sm btn-warning float-right">Add to Cart</button>
+                <input type="hidden" name="quantity" value="1" min="1" max="20">
+                {% set colors = product.colors.split(',') %}
+                <select name="colors" id="colors" style="visibility: hidden;">
+                    {% for color in colors %}
+                    {% set col = color.split(':') %}
+                    <option value="{{col[0]}}">{{col[0] | capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+</div>
+
+{% endblock content %}

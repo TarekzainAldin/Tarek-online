@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block content %}
+{% from "_formhelpers.html" import render_field %}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card shadow-lg p-4" style="width: 50rem; border-radius: 12px;">
+        <div class="card-header bg-primary text-white text-center" style="border-radius: 12px 12px 0 0;">
+            <h3>🔹 Create an Account</h3>
+        </div>
+        <div class="card-body">
+            <form action="" method="post" enctype="multipart/form-data">
+                {{ form.csrf_token }}
+                
+                <div class="row g-3">
+                    <!-- Left Column -->
+                    <div class="col-md-6">
+                        {{ render_field(form.name, class="form-control", placeholder="Full Name") }}
+                        {{ render_field(form.username, class="form-control", placeholder="Username") }}
+                        {{ render_field(form.email, class="form-control", placeholder="Email Address") }}
+                        {{ render_field(form.password, class="form-control", placeholder="Password") }}
+                        {{ render_field(form.confirm, class="form-control", placeholder="Confirm Password") }}
+                        <div class="mt-2">
+                            <label class="form-label">Profile Picture</label>
+                            {{ form.profile(class="form-control") }}
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column -->
+                    <div class="col-md-6">
+                        {{ render_field(form.country, class="form-control", placeholder="Country") }}
+                        {{ render_field(form.city, class="form-control", placeholder="City") }}
+                        {{ render_field(form.contact, class="form-control", placeholder="Phone Number") }}
+                        {{ render_field(form.address, class="form-control", placeholder="Street Address") }}
+                        {{ render_field(form.zipcode, class="form-control", placeholder="ZIP Code") }}
+                    </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="d-grid mt-4">
+                    {{ form.submit(class="btn btn-lg btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

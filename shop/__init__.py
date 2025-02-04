@@ -4,6 +4,7 @@ from flask_bcrypt import Bcrypt
 from flask_uploads import IMAGES, UploadSet ,configure_uploads,patch_request_class
 from flask_migrate import Migrate
 import os 
+from flask_msearch import Search
 
 basedir=os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -17,6 +18,8 @@ patch_request_class(app)
 
 db=SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+search=Search()
+search.init_app(app)
 
 migrate = Migrate(app, db)
 with app.app_context():
@@ -28,4 +31,5 @@ with app.app_context():
 from shop.admin import routes
 from shop.products import routes
 from shop.carts import carts
+from shop.customer import routes
 
