@@ -5,6 +5,7 @@ from flask_uploads import IMAGES, UploadSet ,configure_uploads,patch_request_cla
 from flask_migrate import Migrate
 import os 
 from flask_msearch import Search
+from flask_login import LoginManager
 
 basedir=os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -20,6 +21,12 @@ db=SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 search=Search()
 search.init_app(app)
+
+login_manger=LoginManager()
+login_manger.init_app(app)
+login_manger.login_view='customerLogin'
+login_manger.needs_refresh_message_category='danger'
+login_manger.login_message=u"please login first"
 
 migrate = Migrate(app, db)
 with app.app_context():
