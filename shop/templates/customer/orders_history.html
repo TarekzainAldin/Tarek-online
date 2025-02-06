@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Your Order History</h2>
+
+    {% if orders %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Invoice</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Total Amount</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.invoice }}</td>
+                    <td>{{ order.date_created.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ order.status }}</td>
+                    <td>
+                        {% set total = 0 %}
+                        {% for item in order.orders.values() %}
+                            {% set total = total + (item['price'] | float * item['quantity'] | int) %}
+                        {% endfor %}
+                        ${{ "%.2f"|format(total) }}
+                    </td>
+                    <td><a href="{{ url_for('orders', invoice=order.invoice) }}" class="btn btn-info">View Details</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>You have no past orders.</p>
+    {% endif %}
+</div>
+{% endblock %}

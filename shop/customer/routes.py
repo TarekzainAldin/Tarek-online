@@ -15,23 +15,70 @@ stripe.api_key ='sk_test_51MTmW1LeR5YvDcaB7I1SK4DCiiO8frI1ChvtXS55bPb2srgwFmjjGI
 
 
 
-@app.route('/payment',methods=['POST'])
+# @app.route('/payment',methods=['POST'])
+# def payment():
+#     invoice = request.form.get('invoice')
+#     amount = request.form.get('amount')
+#     customer = stripe.Customer.create(
+#       email=request.form['stripeEmail'],
+#       source=request.form['stripeToken'],
+#     )
+#     charge = stripe.Charge.create(
+#       customer=customer.id,
+#       description='Tarek-Online',
+#       amount=amount,
+#       currency='usd',
+#     )
+#     orders =  CustomerOrder.query.filter_by(customer_id = current_user.id,invoice=invoice).order_by(CustomerOrder.id.desc()).first()
+#     orders.status = 'Paid'
+#     db.session.commit()
+#     return redirect(url_for('thanks'))
+
+
+@app.route('/payment', methods=['POST'])
 def payment():
     invoice = request.form.get('invoice')
     amount = request.form.get('amount')
+
+    # Fetch order from database
+    orders = CustomerOrder.query.filter_by(customer_id=current_user.id, invoice=invoice).first()
+
+    if not orders:
+        flash("Order not found!", "danger")
+        return redirect(url_for('cart'))  
+
+    # Extract product names from the JSON-encoded orders field
+    order_data = orders.orders  # No need to use json.loads() because JsonEcodedDict already handles it
+
+    # Ensure order_data is a dictionary
+    if not isinstance(order_data, dict):
+        flash("Invalid order format!", "danger")
+        return redirect(url_for('cart'))
+
+    # Extract product names from the JSON data
+    product_names = ", ".join([item["name"] for item in order_data.values()])
+
+    # Format order description for Stripe
+    order_description = f"Order #{orders.invoice}: {product_names}"
+
+    # Create Stripe customer
     customer = stripe.Customer.create(
-      email=request.form['stripeEmail'],
-      source=request.form['stripeToken'],
+        email=request.form['stripeEmail'],
+        source=request.form['stripeToken'],
     )
+
+    # Create Stripe charge with detailed description
     charge = stripe.Charge.create(
-      customer=customer.id,
-      description='Myshop',
-      amount=amount,
-      currency='usd',
+        customer=customer.id,
+        description=order_description,  # Now includes product details
+        amount=amount,
+        currency='usd',
     )
-    orders =  CustomerOrder.query.filter_by(customer_id = current_user.id,invoice=invoice).order_by(CustomerOrder.id.desc()).first()
+
+    # Mark order as paid
     orders.status = 'Paid'
     db.session.commit()
+
     return redirect(url_for('thanks'))
 
 @app.route('/thanks')
@@ -148,3 +195,14 @@ def get_pdf(invoice):
             response.headers['content-Disposition'] ='inline; filename='+invoice+'.pdf'
             return response
     return request(url_for('orders'))
+
+@app.route('/customer/orders')
+@login_required
+def customer_orders():
+    if not current_user.is_authenticated:
+        return redirect(url_for('customerLogin'))
+
+    customer_id = current_user.id
+    orders = CustomerOrder.query.filter_by(customer_id=customer_id).order_by(CustomerOrder.date_created.desc()).all()
+
+    return render_template('customer/orders_history.html', orders=orders)

@@ -1,1 +1,16 @@
-<h1>Thank you shopping with us! </h1>
+{% extends 'layout.html' %}
+{% block content %}
+{% include 'navbar.html' %}
+
+<div style="text-align: center; margin-top: 50px;">
+    <h1 style="color: #2c3e50;">Thank You for Shopping with Us!</h1>
+    <p style="font-size: 18px; color: #555;">Your order has been successfully placed.</p>
+    
+    <a href="{{ url_for('home') }}" 
+       style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #3498db; color: white; 
+              text-decoration: none; border-radius: 5px; font-size: 16px;">
+       Return to Home
+    </a>
+</div>
+
+{% endblock content %}
