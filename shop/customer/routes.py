@@ -1,20 +1,23 @@
 from flask import render_template,session, request,redirect,url_for,flash,current_app,make_response
 from flask_login import login_required, current_user, logout_user, login_user
 from shop import app,db,photos, search,bcrypt,login_manager
-from .forms import CustomerRegisterForm, CustomerLoginFrom
-from.models import Register,CustomerOrder
+from .forms import CustomerRegisterForm, CustomerLoginForm
+from .models import Register,CustomerOrder
 import secrets
 import os
 import json
 import pdfkit
 import stripe
 
-buplishable_key ='pk_live_51MTmW1LeR5YvDcaBouQXi1EJHBwxkgs4KpWtRwXvF171bXUIzjUXH17ueab2FJGaZiOULoqBKAfn417I6TdYAfFe00MTu6MqpV'
-stripe.api_key ='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'
+buplishable_key ='pk_test_51MTmW1LeR5YvDcaBQSE9JSiXXRiPbnpPb40YuDKrJ6N10cDy1xar4s9b1xoQ3LdE9JKJJ9w9CpRxXe7eHP8bkLlk00BSb7wOaJ'
+stripe.api_key ='sk_test_51MTmW1LeR5YvDcaB7I1SK4DCiiO8frI1ChvtXS55bPb2srgwFmjjGIOV3I0BEjqJ1Rb2UPZ9f37KCeG9HAhjk0Pg00NSicw8tm'
+
+
+
 
 @app.route('/payment',methods=['POST'])
 def payment():
-    invoice = request.get('invoice')
+    invoice = request.form.get('invoice')
     amount = request.form.get('amount')
     customer = stripe.Customer.create(
       email=request.form['stripeEmail'],
@@ -51,7 +54,7 @@ def customer_register():
 
 @app.route('/customer/login', methods=['GET','POST'])
 def customerLogin():
-    form = CustomerLoginFrom()
+    form = CustomerLoginForm()
     if form.validate_on_submit():
         user = Register.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):

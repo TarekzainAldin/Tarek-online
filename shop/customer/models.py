@@ -1,9 +1,9 @@
-from shop import app, db ,login_manger
+from shop import app, db ,login_manager
 from datetime import datetime
 from flask_login import UserMixin
 import json
 
-@login_manger.user_loader
+@login_manager.user_loader
 def user_loader(user_id):
     return Register.query.get(user_id)
 
