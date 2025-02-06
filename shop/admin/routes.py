@@ -3,6 +3,7 @@ from shop import app, db, bcrypt
 from .forms import RegistrationForm, LoginForm
 from.models import User
 from shop.products.models import Addproduct,Brand,Category
+from ..customer.models import CustomerOrder 
 import os 
 
 
@@ -124,3 +125,22 @@ def login():
             return redirect(url_for('login'))
     return render_template('admin/login.html',title='Login page',form=form)
    
+
+@app.route('/admin/orders')
+def admin_orders():
+    if 'email' not in session:  # Check if the admin is logged in
+        flash('Please log in first!', 'danger')
+        return redirect(url_for('login'))
+
+    orders = CustomerOrder.query.order_by(CustomerOrder.date_created.desc()).all()  # Get all orders
+
+    return render_template('admin/orders.html', title='All Orders', orders=orders)
+
+@app.route('/admin/order/<int:order_id>')
+def view_order(order_id):
+    if 'email' not in session:
+        flash('Please log in first!', 'danger')
+        return redirect(url_for('login'))
+
+    order = CustomerOrder.query.get_or_404(order_id)  # Get order by ID
+    return render_template('admin/order_details.html', order=order)

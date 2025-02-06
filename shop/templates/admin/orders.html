@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+  <div class="container">
+    <a class="navbar-brand" href="/admin">ADMIN PANEL</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="/admin">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/brands">Brands</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/category">Categories</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('admin_orders') }}">Orders</a>
+      </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Add Products
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+             <a class="dropdown-item" href="{{url_for('addproduct')}}">Add product</a>
+            <a class="dropdown-item" href="{{url_for('addbrand')}}">add brand</a>
+            <a class="dropdown-item" href="{{url_for('addcat')}}">add category</a>
+          </div>
+        </li>
+      </ul>
+  
+    </div>
+  </div>
+</nav>
+<!-- End Navbar -->
+{% include '_messages.html' %}
+   
+<div class="container">
+    <h2 class="mt-4">All Customer Orders</h2>
+    <table class="table table-bordered mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>Order ID</th>
+                <th>Customer ID</th>
+                <th>Status</th>
+                <th>Date Created</th>
+                <th>View Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.customer_id }}</td>
+                <td>{{ order.status }}</td>
+                <td>{{ order.date_created.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>
+                    <a href="{{ url_for('view_order', order_id=order.id) }}" class="btn btn-primary btn-sm">
+                        View Order
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
