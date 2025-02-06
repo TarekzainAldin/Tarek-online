@@ -59,7 +59,7 @@
                <td> <h5>Grand total: ${{grandTotal}}</h3> </td>
                
                 <td> 
-                    <form action="#" method="post">
+                    <form action="{{url_for('get_pdf', invoice=orders.invoice)}}" method="post">
                         <button type="submit" class="btn btn-info"> Get pdf</button>
                     </form>
                      </td>
