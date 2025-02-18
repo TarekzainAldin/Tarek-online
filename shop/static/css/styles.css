@@ -8,3 +8,8 @@
 .container button:hover{
     background-color: blanchedalmond;
 }
+.hero {
+    background-image: url('/static/images/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+}

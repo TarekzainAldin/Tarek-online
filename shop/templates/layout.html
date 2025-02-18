@@ -1,59 +1,160 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Bootstrap CSS -->
+    
+    <!-- Bootstrap CSS (Use only one version) -->
     <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
-    {% if title %}
-    <title>{{title}}</title>
-    {% else %}
-    <title>Tarek-online</title>
-    {% endif %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <!-- OR use the CDN version -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"> -->
+
+    <title>{{ title if title else "Tarek-online" }}</title>
   </head>
   <body>
-    
-
-    {% block content %}
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="#">Navbar</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-    
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Dropdown
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Something else here</a>
-            </div>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" href="#">Disabled</a>
-          </li>
-        </ul>
-        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">TAREK-Online</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="/">All Products</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Brands
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                {% for brand in brands %}
+                <li><a class="dropdown-item" href="{{ url_for('get_brand', id=brand.id) }}">{{ brand.name }}</a></li>
+                {% endfor %}
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownCategory" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Categories
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdownCategory">
+                {% for category in categories %}
+                <li><a class="dropdown-item" href="{{ url_for('get_category', id=category.id) }}">{{ category.name }}</a></li>
+                {% endfor %}
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('getCart') }}">Cart ({{ session['Shoppingcart']|length }})</a>
+            </li>
+            {% if current_user.is_authenticated %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ current_user.name }}
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                <li><a class="dropdown-item" href="{{ url_for('customer_logout') }}">Logout</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('customer_orders') }}">My Orders</a></li>
+              </ul>
+            </li>
+            {% else %}
+            <li class="nav-item ms-auto">
+              <a class="nav-link" href="{{ url_for('customer_register') }}">Sign up</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('customerLogin') }}">Login</a>
+            </li>
+            {% endif %}
+          </ul>
+          <!-- Search Form -->
+          <form class="d-flex" action="{{ url_for('result') }}" method="get">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q">
+            <button class="btn btn-outline-light" type="submit">Search</button>
+          </form>
+        </div>
       </div>
     </nav>
+
+    <!-- Hero Section -->
+    <section class="hero bg-dark text-white py-5">
+      <div class="container text-center">
+          <div class="row">
+              <div class="col-12">
+                  <h1 class="display-4 fw-bold mb-3">Welcome to TAREK-Online!</h1>
+                  <p class="lead mb-4">Discover top-quality products and unbeatable deals. Your shopping journey starts here.</p>
+                  <a href="{{ url_for('customerLogin') }}" class="btn btn-primary btn-lg px-4 py-2">Start Shopping</a>
+              </div>
+          </div>
+      </div>
+  </section>
+    {% block content %}
+    <!-- Your content goes here -->
     {% endblock content %}
-    <script src="{{url_for('static', filename='js/jquery-3.4.1.slim.min.js')}}" ></script>
-    <script src="{{url_for('static', filename='js/popper.min.js')}}"></script>
-    <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+
+    <!-- Bootstrap JS (Use only one version) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- OR -->
+    <!-- <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script> -->
+ 
+    <!-- Footer -->
+    <footer class="footer bg-dark text-white pt-5 pb-4 mt-5">
+      <div class="container">
+        <div class="row">
+          <!-- About Us Section -->
+          <div class="col-md-3 mb-4">
+            <h5 class="text-uppercase mb-3">About Us</h5>
+            <p>At TAREK-Online, we offer the best products with excellent customer service. Our mission is to bring top-quality items to your doorstep.</p>
+          </div>
+
+          <!-- Quick Links Section -->
+          <div class="col-md-3 mb-4">
+            <h5 class="text-uppercase mb-3">Quick Links</h5>
+            <ul class="list-unstyled">
+              <li><a href="/" class="text-white text-decoration-none">Home</a></li>
+              <li><a class="text-white text-decoration-none" href="#">Categories</a></li>
+              <li><a href="#" class="text-white text-decoration-none">Shopping Cart</a></li>
+              <li><a href="" class="text-white text-decoration-none">My Orders</a></li>
+            </ul>
+          </div>
+
+          <!-- Social Media Links Section -->
+          <div class="col-md-3 mb-4">
+            <h5 class="text-uppercase mb-3">Follow Us</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-white text-decoration-none"><i class="fab fa-facebook-f me-2"></i> Facebook</a></li>
+              <li><a href="#" class="text-white text-decoration-none"><i class="fab fa-twitter me-2"></i> Twitter</a></li>
+              <li><a href="#" class="text-white text-decoration-none"><i class="fab fa-instagram me-2"></i> Instagram</a></li>
+              <li><a href="#" class="text-white text-decoration-none"><i class="fab fa-youtube me-2"></i> YouTube</a></li>
+            </ul>
+          </div>
+
+          <!-- Contact Info Section -->
+          <div class="col-md-3 mb-4">
+            <h5 class="text-uppercase mb-3">Contact Us</h5>
+            <ul class="list-unstyled">
+              <li><i class="fas fa-map-marker-alt me-2"></i> 9 RUE GUYNEMER, LAVAL 53000, FRANCE</li>
+              <li><i class="fas fa-phone-alt me-2"></i> +33752461092</li>
+              <li><i class="fas fa-envelope me-2"></i> support@tarek-online.com</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Bottom Footer -->
+        <div class="row mt-4">
+          <div class="col text-center">
+            <p class="mb-0">&copy; 2025 TAREK-Online. All rights reserved.</p>
+            <p class="mb-0">
+              <a href="#" class="text-white text-decoration-none">Privacy Policy</a> | 
+              <a href="#" class="text-white text-decoration-none">Terms of Service</a> | 
+              <a href="#" class="text-white text-decoration-none">Sitemap</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Font Awesome Icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
   </body>
 </html>
