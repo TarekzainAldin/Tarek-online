@@ -118,3 +118,31 @@
 .modal-header {
     background-color: #f8d7da;
 }
+
+/* styles.css */
+
+/* Create a wave animation */
+@keyframes wave {
+    0% {
+      transform: translateY(0);
+    }
+    25% {
+      transform: translateY(-10px);
+    }
+    50% {
+      transform: translateY(0);
+    }
+    75% {
+      transform: translateY(10px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  
+  /* Apply the wave animation to the text */
+  .wave-text {
+    display: inline-block; /* Ensures proper animation of inline elements */
+    animation: wave 1s ease-in-out infinite;
+  }
+  

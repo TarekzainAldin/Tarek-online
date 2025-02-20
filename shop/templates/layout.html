@@ -4,19 +4,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     
     <title>{{ title if title else "Tarek-Online" }}</title>
-
-    <!-- Font Awesome for icons -->
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   </head>
   <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
       <div class="container">
+        <a class="navbar-brand" href="#">
+          <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="TAREK-Online Logo" height="40">
+        </a>
         <a class="navbar-brand fw-bold" href="#">TAREK-Online</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
@@ -76,16 +77,29 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero bg-dark text-white py-5 text-center">
-      <div class="container">
-        <h1 class="display-4 fw-bold">
-          <span style="color: red; text-shadow: 0 0 10px red;">Welcome</span>
-          <span style="background: linear-gradient(90deg, #ff0000, #ff7300, #ff007f); -webkit-background-clip: text; background-clip: text; color: transparent;">
-            TAREK-Online
-          </span>
-        </h1>
-        <p class="lead">Discover top-quality products and unbeatable deals. Your shopping journey starts here.</p>
-        <a href="{{ url_for('customerLogin') }}" class="btn btn-primary btn-lg">Start Shopping</a>
+    <section class="hero bg-dark text-white py-5">
+      <div class="container text-center">
+        <div class="row">
+          <div class="col-12">
+            <h1 class="display-4 fw-bold mb-3">
+              <span style="color: red; font-weight: bold; text-shadow: 0 0 10px red;">Welcome</span>
+              <span style="font-weight: bold; font-style: italic; background: linear-gradient(90deg, #ff0000, #ff7300, #ff007f); 
+                          -webkit-background-clip: text; background-clip: text; color: transparent;">
+                TAREK-Online
+              </span>
+            </h1>
+            <p class="text-black ms-lg-3 fs-3 fw-bold">Discover top-quality products and unbeatable deals. Your shopping journey starts here.</p>
+
+            {% if current_user.is_authenticated %}
+              <p class="text-danger ms-lg-3 fs-3 fw-bold wave-text">
+                Welcome back, {{ current_user.name }}! You can start shopping now.
+              </p>
+            {% else %}
+              <!-- If the user is not logged in, show the "Start Shopping" button -->
+              <a href="{{ url_for('customerLogin') }}" class="btn btn-primary btn-lg px-4 py-2">Start Shopping</a>
+            {% endif %}
+          </div>
+        </div>
       </div>
     </section>
 
@@ -99,24 +113,24 @@
         <div class="row">
           <!-- About Us -->
           <div class="col-md-3 mb-4">
-            <h5>About Us</h5>
+            <h5><i class="fas fa-info-circle me-2"></i> About Us</h5>
             <p>We provide the best products with excellent service. Enjoy a seamless shopping experience with TAREK-Online.</p>
           </div>
-
+    
           <!-- Quick Links -->
           <div class="col-md-3 mb-4">
-            <h5>Quick Links</h5>
+            <h5><i class="fas fa-link me-2"></i> Quick Links</h5>
             <ul class="list-unstyled">
-              <li><a href="/" class="text-white">Home</a></li>
-              <li><a href="#" class="text-white">Categories</a></li>
-              <li><a href="#" class="text-white">Shopping Cart</a></li>
-              <li><a href="#" class="text-white">My Orders</a></li>
+              <li><a href="/" class="text-white"><i class="fas fa-home me-2"></i> Home</a></li>
+              <li><a href="#" class="text-white"><i class="fas fa-th-large me-2"></i> Categories</a></li>
+              <li><a href="#" class="text-white"><i class="fas fa-shopping-cart me-2"></i> Shopping Cart</a></li>
+              <li><a href="#" class="text-white"><i class="fas fa-box-open me-2"></i> My Orders</a></li>
             </ul>
           </div>
-
+    
           <!-- Follow Us -->
           <div class="col-md-3 mb-4">
-            <h5>Follow Us</h5>
+            <h5><i class="fas fa-share-alt me-2"></i> Follow Us</h5>
             <ul class="list-unstyled">
               <li><a href="#" class="text-white"><i class="fab fa-facebook-f me-2"></i> Facebook</a></li>
               <li><a href="#" class="text-white"><i class="fab fa-twitter me-2"></i> Twitter</a></li>
@@ -124,10 +138,10 @@
               <li><a href="#" class="text-white"><i class="fab fa-youtube me-2"></i> YouTube</a></li>
             </ul>
           </div>
-
+    
           <!-- Contact Info -->
           <div class="col-md-3 mb-4">
-            <h5>Contact Us</h5>
+            <h5><i class="fas fa-address-book me-2"></i> Contact Us</h5>
             <ul class="list-unstyled">
               <li><i class="fas fa-map-marker-alt me-2"></i> 9 Rue Guynemer, Laval 53000, France</li>
               <li><i class="fas fa-phone-alt me-2"></i> +33752461092</li>
@@ -135,22 +149,22 @@
             </ul>
           </div>
         </div>
-
+    
         <!-- Bottom Footer -->
         <div class="row mt-4">
           <div class="col text-center">
             <p>&copy; 2025 TAREK-Online. All rights reserved.</p>
             <p>
-              <a href="#" class="text-white">Privacy Policy</a> | 
-              <a href="#" class="text-white">Terms of Service</a> | 
-              <a href="#" class="text-white">Sitemap</a>
+              <a href="#" class="text-white"><i class="fas fa-user-secret me-2"></i> Privacy Policy</a> | 
+              <a href="#" class="text-white"><i class="fas fa-file-contract me-2"></i> Terms of Service</a> | 
+              <a href="#" class="text-white"><i class="fas fa-sitemap me-2"></i> Sitemap</a>
             </p>
           </div>
         </div>
       </div>
     </footer>
 
-    <!-- Bootstrap JS -->
+    <!-- Bootstrap JS and Popper.js -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
