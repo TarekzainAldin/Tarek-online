@@ -13,3 +13,108 @@
     background-size: cover;
     background-position: center;
 }
+
+.sidebar {
+    width:400px;
+    min-height: auto;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding-top: 20px;
+}
+
+.container-fluid {
+    margin-left: 260px;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f1f1f1;
+    transition: 0.3s;
+}
+
+.btn {
+    transition: 0.3s;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+.img-thumbnail {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.modal-header {
+    background-color: #f8d7da;
+}
+/* .sidebar {
+    width:400px;
+    min-height: 400PX;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding-top: 20px;
+}
+
+.container-fluid {
+    margin-left: 400px;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f1f1f1;
+    transition: 0.3s;
+}
+
+.btn {
+    transition: 0.3s;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+.img-thumbnail {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.modal-header {
+    background-color: #f8d7da;
+} */
+
+.sidebar {
+    width: 400px; /* Adjust the width as needed */
+    height: 100vh; /* Full height of the viewport */
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding-top: 20px;
+    overflow-y: auto; /* Add scroll if content overflows */
+}
+
+.container-fluid {
+    margin-left: 400px; /* Adjust this to match the width of the sidebar */
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f1f1f1;
+    transition: 0.3s;
+}
+
+.btn {
+    transition: 0.3s;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+.img-thumbnail {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.modal-header {
+    background-color: #f8d7da;
+}

@@ -3,73 +3,72 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
-    <!-- Bootstrap CSS (Use only one version) -->
-    <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <!-- OR use the CDN version -->
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"> -->
 
-    <title>{{ title if title else "Tarek-online" }}</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    
+    <title>{{ title if title else "Tarek-Online" }}</title>
+
+    <!-- Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   </head>
   <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
       <div class="container">
-        <a class="navbar-brand" href="#">TAREK-Online</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <a class="navbar-brand fw-bold" href="#">TAREK-Online</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="/">All Products</a>
-            </li>
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item"><a class="nav-link" href="/">All Products</a></li>
+            
+            <!-- Brands Dropdown -->
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Brands
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="brandsDropdown" data-bs-toggle="dropdown">Brands</a>
+              <ul class="dropdown-menu">
                 {% for brand in brands %}
                 <li><a class="dropdown-item" href="{{ url_for('get_brand', id=brand.id) }}">{{ brand.name }}</a></li>
                 {% endfor %}
               </ul>
             </li>
+
+            <!-- Categories Dropdown -->
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownCategory" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Categories
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdownCategory">
+              <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" data-bs-toggle="dropdown">Categories</a>
+              <ul class="dropdown-menu">
                 {% for category in categories %}
                 <li><a class="dropdown-item" href="{{ url_for('get_category', id=category.id) }}">{{ category.name }}</a></li>
                 {% endfor %}
               </ul>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('getCart') }}">Cart ({{ session['Shoppingcart']|length }})</a>
-            </li>
+
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('getCart') }}">Cart ({{ session['Shoppingcart']|length }})</a></li>
+          </ul>
+
+          <!-- User Authentication -->
+          <ul class="navbar-nav">
             {% if current_user.is_authenticated %}
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                {{ current_user.name }}
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" data-bs-toggle="dropdown">
+                <i class="fas fa-user"></i> {{ current_user.name }}
               </a>
-              <ul class="dropdown-menu" aria-labelledby="userDropdown">
-                <li><a class="dropdown-item" href="{{ url_for('customer_logout') }}">Logout</a></li>
+              <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="{{ url_for('customer_orders') }}">My Orders</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('customer_logout') }}">Logout</a></li>
               </ul>
             </li>
             {% else %}
-            <li class="nav-item ms-auto">
-              <a class="nav-link" href="{{ url_for('customer_register') }}">Sign up</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('customerLogin') }}">Login</a>
-            </li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('customer_register') }}">Sign up</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('customerLogin') }}">Login</a></li>
             {% endif %}
           </ul>
+
           <!-- Search Form -->
-          <form class="d-flex" action="{{ url_for('result') }}" method="get">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q">
+          <form class="d-flex ms-lg-3" action="{{ url_for('result') }}" method="get">
+            <input class="form-control me-2" type="search" placeholder="Search" name="q">
             <button class="btn btn-outline-light" type="submit">Search</button>
           </form>
         </div>
@@ -77,67 +76,60 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero bg-dark text-white py-5">
-      <div class="container text-center">
-          <div class="row">
-              <div class="col-12">
-                  <h1 class="display-4 fw-bold mb-3">Welcome to TAREK-Online!</h1>
-                  <h1 class="display-4 fw-bold mb-3">
-                    <span style="color: red; font-weight: bold; text-shadow: 0 0 10px red;">Welcome</span>
-                    <span style="font-weight: bold; font-style: italic; background: linear-gradient(90deg, #ff0000, #ff7300, #ff007f);  color: transparent;">TAREK-Online</span>
-                  </h1>
-                  <p class="text-colore red mb-4">Discover top-quality products and unbeatable deals. Your shopping journey starts here.</p>
-                  <a href="{{ url_for('customerLogin') }}" class="btn btn-primary btn-lg px-4 py-2">Start Shopping</a>
-              </div>
-          </div>
+    <section class="hero bg-dark text-white py-5 text-center">
+      <div class="container">
+        <h1 class="display-4 fw-bold">
+          <span style="color: red; text-shadow: 0 0 10px red;">Welcome</span>
+          <span style="background: linear-gradient(90deg, #ff0000, #ff7300, #ff007f); -webkit-background-clip: text; background-clip: text; color: transparent;">
+            TAREK-Online
+          </span>
+        </h1>
+        <p class="lead">Discover top-quality products and unbeatable deals. Your shopping journey starts here.</p>
+        <a href="{{ url_for('customerLogin') }}" class="btn btn-primary btn-lg">Start Shopping</a>
       </div>
-  </section>
+    </section>
+
     {% block content %}
-    <!-- Your content goes here -->
+    <!-- Your dynamic content goes here -->
     {% endblock content %}
 
-    <!-- Bootstrap JS (Use only one version) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- OR -->
-    <!-- <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script> -->
- 
     <!-- Footer -->
     <footer class="footer bg-dark text-white pt-5 pb-4 mt-5">
       <div class="container">
         <div class="row">
-          <!-- About Us Section -->
+          <!-- About Us -->
           <div class="col-md-3 mb-4">
-            <h5 class="text-uppercase mb-3">About Us</h5>
-            <p>At TAREK-Online, we offer the best products with excellent customer service. Our mission is to bring top-quality items to your doorstep.</p>
+            <h5>About Us</h5>
+            <p>We provide the best products with excellent service. Enjoy a seamless shopping experience with TAREK-Online.</p>
           </div>
 
-          <!-- Quick Links Section -->
+          <!-- Quick Links -->
           <div class="col-md-3 mb-4">
-            <h5 class="text-uppercase mb-3">Quick Links</h5>
+            <h5>Quick Links</h5>
             <ul class="list-unstyled">
-              <li><a href="/" class="text-white text-decoration-none">Home</a></li>
-              <li><a class="text-white text-decoration-none" href="#">Categories</a></li>
-              <li><a href="#" class="text-white text-decoration-none">Shopping Cart</a></li>
-              <li><a href="" class="text-white text-decoration-none">My Orders</a></li>
+              <li><a href="/" class="text-white">Home</a></li>
+              <li><a href="#" class="text-white">Categories</a></li>
+              <li><a href="#" class="text-white">Shopping Cart</a></li>
+              <li><a href="#" class="text-white">My Orders</a></li>
             </ul>
           </div>
 
-          <!-- Social Media Links Section -->
+          <!-- Follow Us -->
           <div class="col-md-3 mb-4">
-            <h5 class="text-uppercase mb-3">Follow Us</h5>
+            <h5>Follow Us</h5>
             <ul class="list-unstyled">
-              <li><a href="#" class="text-white text-decoration-none"><i class="fab fa-facebook-f me-2"></i> Facebook</a></li>
-              <li><a href="#" class="text-white text-decoration-none"><i class="fab fa-twitter me-2"></i> Twitter</a></li>
-              <li><a href="#" class="text-white text-decoration-none"><i class="fab fa-instagram me-2"></i> Instagram</a></li>
-              <li><a href="#" class="text-white text-decoration-none"><i class="fab fa-youtube me-2"></i> YouTube</a></li>
+              <li><a href="#" class="text-white"><i class="fab fa-facebook-f me-2"></i> Facebook</a></li>
+              <li><a href="#" class="text-white"><i class="fab fa-twitter me-2"></i> Twitter</a></li>
+              <li><a href="#" class="text-white"><i class="fab fa-instagram me-2"></i> Instagram</a></li>
+              <li><a href="#" class="text-white"><i class="fab fa-youtube me-2"></i> YouTube</a></li>
             </ul>
           </div>
 
-          <!-- Contact Info Section -->
+          <!-- Contact Info -->
           <div class="col-md-3 mb-4">
-            <h5 class="text-uppercase mb-3">Contact Us</h5>
+            <h5>Contact Us</h5>
             <ul class="list-unstyled">
-              <li><i class="fas fa-map-marker-alt me-2"></i> 9 RUE GUYNEMER, LAVAL 53000, FRANCE</li>
+              <li><i class="fas fa-map-marker-alt me-2"></i> 9 Rue Guynemer, Laval 53000, France</li>
               <li><i class="fas fa-phone-alt me-2"></i> +33752461092</li>
               <li><i class="fas fa-envelope me-2"></i> support@tarek-online.com</li>
             </ul>
@@ -147,18 +139,18 @@
         <!-- Bottom Footer -->
         <div class="row mt-4">
           <div class="col text-center">
-            <p class="mb-0">&copy; 2025 TAREK-Online. All rights reserved.</p>
-            <p class="mb-0">
-              <a href="#" class="text-white text-decoration-none">Privacy Policy</a> | 
-              <a href="#" class="text-white text-decoration-none">Terms of Service</a> | 
-              <a href="#" class="text-white text-decoration-none">Sitemap</a>
+            <p>&copy; 2025 TAREK-Online. All rights reserved.</p>
+            <p>
+              <a href="#" class="text-white">Privacy Policy</a> | 
+              <a href="#" class="text-white">Terms of Service</a> | 
+              <a href="#" class="text-white">Sitemap</a>
             </p>
           </div>
         </div>
       </div>
     </footer>
 
-    <!-- Font Awesome Icons -->
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

@@ -54,6 +54,9 @@ def get_category(id):
     return render_template('products/index.html',get_cat_prod=get_cat_prod,brands=brands(),categories=categories(),get_cat=get_cat)
 @app.route('/addbrand',methods=['GET','POST'])
 def addbrand():
+    if 'email' not in session:
+        flash('Login first please','danger')
+        return redirect(url_for('login'))
     if request.method =="POST":
         getbrand=request.form.get('brand')
         brand=Brand(name=getbrand)
@@ -98,6 +101,9 @@ def deletebrand(id):
 
 @app.route('/addcat',methods=['GET','POST'])
 def addcat():
+    if 'email' not in session:
+        flash('Login first please','danger')
+        return redirect(url_for('login'))
     if request.method =="POST":
         getcat = request.form.get('category')
         category = Category(name=getcat)
@@ -137,6 +143,9 @@ def deletecat(id):
 
 @app.route('/addproduct', methods=['GET', 'POST'])
 def addproduct():
+    if 'email'not in session:
+       flash(f'you should be login to contenu ','danger')
+       return redirect('login')
     form = Addproducts(request.form)
     brands = Brand.query.all()
     categories = Category.query.all()
@@ -178,6 +187,7 @@ def addproduct():
 
 @app.route('/updateproduct/<int:id>', methods=['GET', 'POST'])
 def updateproduct(id):  
+    
     product = Addproduct.query.get_or_404(id)
     brands = Brand.query.all()
     categories = Category.query.all()

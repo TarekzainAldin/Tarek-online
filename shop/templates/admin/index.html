@@ -1,135 +1,66 @@
 {% extends "layout_admin.html" %}
 {% block content %}
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-  <div class="container">
-    <a class="navbar-brand" href="/admin">ADMIN PANEL</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="/admin">Home <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/brands">Brands</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/category">Categories</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('admin_orders') }}">Orders</a>
-      </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Add Products
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-             <a class="dropdown-item" href="{{url_for('addproduct')}}">Add product</a>
-            <a class="dropdown-item" href="{{url_for('addbrand')}}">add brand</a>
-            <a class="dropdown-item" href="{{url_for('addcat')}}">add category</a>
-          </div>
-        </li>
-      </ul>
-  
-    </div>
-  </div>
-</nav>
-<!-- End Navbar -->
-{% include '_messages.html' %}
-<!-- Main Content -->
-<div class="container mt-5">
-  <div class="row">
-    <div class="col-md-12">
-      <h2 class="text-center mb-4">Product List</h2>
-      <div class="table-responsive shadow-lg rounded-3">
-        <table class="table table-hover table-bordered">
-          <thead class="table-dark">
-            <tr>
-              <th>ID</th>
-              <th>Image</th>
-              <th>Name</th>
-              <th>Price</th>
-              <th>Discount</th>
-              <th>Brand</th>
-              <th>Edit</th>
-              <th>Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for product in products %}
-            <tr>
-              <td>{{ loop.index }}</td>
-              <td>
-                <img src="{{ url_for('static', filename='images/' + product.image_1) }}" alt="{{ product.name }}" width="50" height="50" class="img-thumbnail">
-              </td>
-              <td>{{ product.name }}</td>
-              <td>${{ product.price }}</td>
-              <td>{{ product.discount }}%</td>
-              <td>{{ product.brand.name }}</td>
-              <td>
-                <a href="{{ url_for('updateproduct', id=product.id) }}" class="btn btn-sm btn-info">Edit</a>
-              </td>
-              <td><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#exampleModal-{{product.id}}">
-                Delete
-              </button></td>
-            </tr>
-           <!-- Button trigger modal -->
+        <div class="table-responsive shadow rounded-3 p-3 bg-white">
+            <table class="table table-hover table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Discount</th>
+                        <th>Brand</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>
+                            <img src="{{ url_for('static', filename='images/' + product.image_1) }}" 
+                                 alt="{{ product.name }}" width="50" height="50" class="img-thumbnail">
+                        </td>
+                        <td>{{ product.name }}</td>
+                        <td>${{ product.price }}</td>
+                        <td>{{ product.discount }}%</td>
+                        <td>{{ product.brand.name }}</td>
+                        <td>
+                            <a href="{{ url_for('updateproduct', id=product.id) }}" class="btn btn-sm btn-info">✏️ Edit</a>
+                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal-{{product.id}}">
+                                🗑 Delete
+                            </button>
+                        </td>
+                    </tr>
 
- <!--============= MODEL ===================-->
- <div class="modal fade" id="exampleModal-{{product.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">{{product.name }}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p class="text-danger">Are you Sure that you want to delete this Category ({{ product.name }})</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <form action="{{url_for('deleteproduct',id=product.id)}}" method="post">
-          <button type="submit" class="btn btn-danger">Delete</button>
-        </form>
-        
-      </div>
+                    <!-- Delete Confirmation Modal -->
+                    <div class="modal fade" id="deleteModal-{{product.id}}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title text-danger">Delete {{ product.name }}?</h5>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="text-danger">Are you sure you want to delete {{ product.name }}?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <form action="{{ url_for('deleteproduct', id=product.id) }}" method="post">
+                                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-  </div>
-</div>
-<!--==============MODEL ===================-->
-
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
 </div>
 
-<!-- Optional: Add custom CSS for hover effect and shadow -->
-<style>
-  .table-hover tbody tr:hover {
-    background-color: #f8f9fa; /* Light gray background on hover */
-    transform: scale(1.02); /* Slight zoom effect on hover */
-    transition: transform 0.2s ease, background-color 0.2s ease;
-  }
-  .shadow-lg {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1); /* Stronger shadow */
-  }
-  .table th, .table td {
-    vertical-align: middle; /* Center-align content vertically */
-  }
-  .navbar {
-    margin-bottom: 2rem; /* Add space below the navbar */
-  }
-  .img-thumbnail {
-    border: 2px solid #dee2e6; /* Add border to images */
-  }
-</style>
+
 
 {% endblock content %}

@@ -126,6 +126,13 @@ def login():
     return render_template('admin/login.html',title='Login page',form=form)
    
 
+@app.route('/logout')
+def logout():
+    session.pop('email', None)  # Remove user from session
+    flash('You have been logged out successfully!', 'success')
+    return redirect(url_for('login'))
+
+    
 @app.route('/admin/orders')
 def admin_orders():
     if 'email' not in session:  # Check if the admin is logged in
