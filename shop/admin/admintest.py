@@ -1,6 +1,6 @@
 import unittest
 from flask import url_for
-from flask_testing import TestCase
+from Flask_Testing import TestCase
 from shop import app, db, bcrypt
 from shop.admin.models import User
 from shop.products.models import Brand, Category, Addproduct
