@@ -52,6 +52,8 @@ def get_category(id):
     get_cat = Category.query.filter_by(id=id).first_or_404()
     get_cat_prod = Addproduct.query.filter_by(category=get_cat).paginate(page=page, per_page=8)
     return render_template('products/index.html',get_cat_prod=get_cat_prod,brands=brands(),categories=categories(),get_cat=get_cat)
+
+
 @app.route('/addbrand',methods=['GET','POST'])
 def addbrand():
     if 'email' not in session:
