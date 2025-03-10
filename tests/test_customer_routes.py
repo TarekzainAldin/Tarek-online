@@ -2,15 +2,14 @@ import pytest
 from flask import url_for
 from shop import app, db
 from shop.customer.models import Register, CustomerOrder
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-
-@pytest.fixture
+# Fixture to set up the Flask test client and database
+@pytest.fixture(scope='module')
 def client():
     app.config['TESTING'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+    app.config['WTF_CSRF_ENABLED'] = False  # Disable CSRF for testing
+
     with app.test_client() as client:
         with app.app_context():
             db.create_all()
@@ -18,6 +17,7 @@ def client():
         with app.app_context():
             db.drop_all()
 
+# Test for customer registration
 def test_customer_register(client):
     response = client.post('/customer/register', data={
         'name': 'Test User',
@@ -33,6 +33,7 @@ def test_customer_register(client):
     assert response.status_code == 200
     assert b'Thank you for registering' in response.data
 
+# Test for customer login
 def test_customer_login(client):
     # Register a user first
     client.post('/customer/register', data={
@@ -54,6 +55,7 @@ def test_customer_login(client):
     assert response.status_code == 200
     assert b'You are login now!' in response.data
 
+# Test for customer logout
 def test_customer_logout(client):
     # Register and login a user first
     client.post('/customer/register', data={
@@ -76,6 +78,7 @@ def test_customer_logout(client):
     assert response.status_code == 200
     assert b'You have been logged out.' in response.data  # Adjust based on actual message
 
+# Test for placing an order
 def test_get_order(client):
     # Register and login a user first
     client.post('/customer/register', data={
@@ -101,6 +104,7 @@ def test_get_order(client):
     assert response.status_code == 200
     assert b'Your order has been sent successfully' in response.data
 
+# Test for viewing order details
 def test_orders(client):
     # Register and login a user first
     client.post('/customer/register', data={
@@ -132,6 +136,7 @@ def test_orders(client):
     assert response.status_code == 200
     assert b'Order Details' in response.data  # Adjust based on actual content
 
+# Test for generating PDF of an order
 def test_get_pdf(client):
     # Register and login a user first
     client.post('/customer/register', data={
@@ -163,6 +168,7 @@ def test_get_pdf(client):
     assert response.status_code == 200
     assert response.headers['Content-Type'] == 'application/pdf'
 
+# Test for viewing order history
 def test_customer_orders(client):
     # Register and login a user first
     client.post('/customer/register', data={
