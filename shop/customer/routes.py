@@ -15,26 +15,6 @@ stripe.api_key ='sk_test_51MTmW1LeR5YvDcaB7I1SK4DCiiO8frI1ChvtXS55bPb2srgwFmjjGI
 
 
 
-# @app.route('/payment',methods=['POST'])
-# def payment():
-#     invoice = request.form.get('invoice')
-#     amount = request.form.get('amount')
-#     customer = stripe.Customer.create(
-#       email=request.form['stripeEmail'],
-#       source=request.form['stripeToken'],
-#     )
-#     charge = stripe.Charge.create(
-#       customer=customer.id,
-#       description='Tarek-Online',
-#       amount=amount,
-#       currency='usd',
-#     )
-#     orders =  CustomerOrder.query.filter_by(customer_id = current_user.id,invoice=invoice).order_by(CustomerOrder.id.desc()).first()
-#     orders.status = 'Paid'
-#     db.session.commit()
-#     return redirect(url_for('thanks'))
-
-
 @app.route('/payment', methods=['POST'])
 def payment():
     invoice = request.form.get('invoice')

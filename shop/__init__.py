@@ -43,3 +43,7 @@ from shop.products import routes
 from shop.admin import routes
 from shop.carts import carts
 from shop.customer import routes
+
+from shop.customer import customerapi
+from shop.admin import adminapi
+from shop.products import apiproduct
