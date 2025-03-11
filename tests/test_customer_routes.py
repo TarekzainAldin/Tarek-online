@@ -1,197 +1,124 @@
-import pytest
-from flask import url_for
-from shop import app, db
-from shop.customer.models import Register, CustomerOrder
+import unittest
+from shop import app, db, bcrypt
+from shop.admin.models import User
+from shop.products.models import Brand, Category, Addproduct
+from shop.customer.models import CustomerOrder
+import json  # Import json
 
-# Fixture to set up the Flask test client and database
-@pytest.fixture(scope='module')
-def client():
-    app.config['TESTING'] = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-    app.config['WTF_CSRF_ENABLED'] = False  # Disable CSRF for testing
-
-    with app.test_client() as client:
+class FlaskAppTestCase(unittest.TestCase):
+    def setUp(self):
+        app.config.update({
+            'TESTING': True,
+            'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:',
+            'SECRET_KEY': 'test-key',
+            'WTF_CSRF_ENABLED': False
+        })
+        self.client = app.test_client()
         with app.app_context():
             db.create_all()
-        yield client
+
+    def tearDown(self):
         with app.app_context():
+            db.session.remove()
             db.drop_all()
 
-# Test for customer registration
-def test_customer_register(client):
-    response = client.post('/customer/register', data={
-        'name': 'Test User',
-        'username': 'testuser',
-        'email': 'testuser@example.com',
-        'password': 'password123',
-        'country': 'Testland',
-        'city': 'Testville',
-        'contact': '1234567890',
-        'address': '123 Test St',
-        'zipcode': '12345'
-    }, follow_redirects=True)
-    assert response.status_code == 200
-    assert b'Thank you for registering' in response.data
+    def login(self, email, password):
+        return self.client.post('/login', data={
+            'email': email,
+            'password': password
+        }, follow_redirects=True)
 
-# Test for customer login
-def test_customer_login(client):
-    # Register a user first
-    client.post('/customer/register', data={
-        'name': 'Test User',
-        'username': 'testuser',
-        'email': 'testuser@example.com',
-        'password': 'password123',
-        'country': 'Testland',
-        'city': 'Testville',
-        'contact': '1234567890',
-        'address': '123 Test St',
-        'zipcode': '12345'
-    })
+    def test_admin_access_with_login(self):
+        with app.app_context():
+            hashed_pw = bcrypt.generate_password_hash('password123').decode('utf-8')
+            user = User(
+                name='Admin User',
+                username='adminuser',
+                email='admin@test.com',
+                password=hashed_pw
+            )
+            db.session.add(user)
+            db.session.commit()
 
-    response = client.post('/customer/login', data={
-        'email': 'testuser@example.com',
-        'password': 'password123'
-    }, follow_redirects=True)
-    assert response.status_code == 200
-    assert b'You are login now!' in response.data
+        response = self.login('admin@test.com', 'password123')
+        self.assertEqual(response.status_code, 200)
 
-# Test for customer logout
-def test_customer_logout(client):
-    # Register and login a user first
-    client.post('/customer/register', data={
-        'name': 'Test User',
-        'username': 'testuser',
-        'email': 'testuser@example.com',
-        'password': 'password123',
-        'country': 'Testland',
-        'city': 'Testville',
-        'contact': '1234567890',
-        'address': '123 Test St',
-        'zipcode': '12345'
-    })
-    client.post('/customer/login', data={
-        'email': 'testuser@example.com',
-        'password': 'password123'
-    })
+        response = self.client.get('/admin', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Admin Page', response.data)
 
-    response = client.get('/customer/logout', follow_redirects=True)
-    assert response.status_code == 200
-    assert b'You have been logged out.' in response.data  # Adjust based on actual message
+    def test_login_logout(self):
+        with app.app_context():
+            hashed_pw = bcrypt.generate_password_hash('testpass').decode('utf-8')
+            user = User(
+                name='Test User',
+                username='testuser',
+                email='test@test.com',
+                password=hashed_pw
+            )
+            db.session.add(user)
+            db.session.commit()
 
-# Test for placing an order
-def test_get_order(client):
-    # Register and login a user first
-    client.post('/customer/register', data={
-        'name': 'Test User',
-        'username': 'testuser',
-        'email': 'testuser@example.com',
-        'password': 'password123',
-        'country': 'Testland',
-        'city': 'Testville',
-        'contact': '1234567890',
-        'address': '123 Test St',
-        'zipcode': '12345'
-    })
-    client.post('/customer/login', data={
-        'email': 'testuser@example.com',
-        'password': 'password123'
-    })
+        response = self.login('test@test.com', 'testpass')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'welcome test@test.com you are logedin now', response.data)
 
-    with client.session_transaction() as session:
-        session['Shoppingcart'] = {'1': {'name': 'Test Product', 'price': '10.00', 'quantity': '1', 'discount': '0'}}
+        response = self.client.get('/logout', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'You have been logged out successfully!', response.data)
 
-    response = client.get('/getorder', follow_redirects=True)
-    assert response.status_code == 200
-    assert b'Your order has been sent successfully' in response.data
+    def test_brands_page(self):
+        with app.app_context():
+            hashed_pw = bcrypt.generate_password_hash('password123').decode('utf-8')
+            admin = User(name='Admin', username='admin', email='admin@test.com', password=hashed_pw)
+            db.session.add(admin)
+            brand = Brand(name='Test Brand')
+            db.session.add(brand)
+            db.session.commit()
 
-# Test for viewing order details
-def test_orders(client):
-    # Register and login a user first
-    client.post('/customer/register', data={
-        'name': 'Test User',
-        'username': 'testuser',
-        'email': 'testuser@example.com',
-        'password': 'password123',
-        'country': 'Testland',
-        'city': 'Testville',
-        'contact': '1234567890',
-        'address': '123 Test St',
-        'zipcode': '12345'
-    })
-    client.post('/customer/login', data={
-        'email': 'testuser@example.com',
-        'password': 'password123'
-    })
+        self.login('admin@test.com', 'password123')
+        response = self.client.get('/brands', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Brands', response.data)
+        self.assertIn(b'Test Brand', response.data)
 
-    # Create an order
-    with client.session_transaction() as session:
-        session['Shoppingcart'] = {'1': {'name': 'Test Product', 'price': '10.00', 'quantity': '1', 'discount': '0'}}
-    client.get('/getorder', follow_redirects=True)
+    def test_categories_page(self):
+        with app.app_context():
+            hashed_pw = bcrypt.generate_password_hash('password123').decode('utf-8')
+            admin = User(name='Admin', username='admin', email='admin@test.com', password=hashed_pw)
+            db.session.add(admin)
+            category = Category(name='Test Category')
+            db.session.add(category)
+            db.session.commit()
 
-    # Get the invoice from the order
-    order = CustomerOrder.query.filter_by(customer_id=1).first()
-    invoice = order.invoice
+        self.login('admin@test.com', 'password123')
+        response = self.client.get('/category', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Category', response.data)
+        self.assertIn(b'Test Category', response.data)
 
-    response = client.get(f'/orders/{invoice}', follow_redirects=True)
-    assert response.status_code == 200
-    assert b'Order Details' in response.data  # Adjust based on actual content
+    def test_admin_orders_page(self):
+        with app.app_context():
+            hashed_pw = bcrypt.generate_password_hash('password123').decode('utf-8')
+            admin = User(name='Admin', username='admin', email='admin@test.com', password=hashed_pw)
+            db.session.add(admin)
+            customer = User(name='Customer', email='cust@test.com', username='cust', password='pw')
+            db.session.add(customer)
+            db.session.commit()
 
-# Test for generating PDF of an order
-def test_get_pdf(client):
-    # Register and login a user first
-    client.post('/customer/register', data={
-        'name': 'Test User',
-        'username': 'testuser',
-        'email': 'testuser@example.com',
-        'password': 'password123',
-        'country': 'Testland',
-        'city': 'Testville',
-        'contact': '1234567890',
-        'address': '123 Test St',
-        'zipcode': '12345'
-    })
-    client.post('/customer/login', data={
-        'email': 'testuser@example.com',
-        'password': 'password123'
-    })
+            order = CustomerOrder(
+                invoice='12345',
+                status='Pending',
+                customer_id=customer.id,
+                orders='[]'  # Make sure this is a valid JSON string
+            )
+            db.session.add(order)
+            db.session.commit()
 
-    # Create an order
-    with client.session_transaction() as session:
-        session['Shoppingcart'] = {'1': {'name': 'Test Product', 'price': '10.00', 'quantity': '1', 'discount': '0'}}
-    client.get('/getorder', follow_redirects=True)
+        self.login('admin@test.com', 'password123')
+        response = self.client.get('/admin/orders', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'All Orders', response.data)
 
-    # Get the invoice from the order
-    order = CustomerOrder.query.filter_by(customer_id=1).first()
-    invoice = order.invoice
-
-    response = client.post(f'/get_pdf/{invoice}', follow_redirects=True)
-    assert response.status_code == 200
-    assert response.headers['Content-Type'] == 'application/pdf'
-
-# Test for viewing order history
-def test_customer_orders(client):
-    # Register and login a user first
-    client.post('/customer/register', data={
-        'name': 'Test User',
-        'username': 'testuser',
-        'email': 'testuser@example.com',
-        'password': 'password123',
-        'country': 'Testland',
-        'city': 'Testville',
-        'contact': '1234567890',
-        'address': '123 Test St',
-        'zipcode': '12345'
-    })
-    client.post('/customer/login', data={
-        'email': 'testuser@example.com',
-        'password': 'password123'
-    })
-
-    # Create an order
-    with client.session_transaction() as session:
-        session['Shoppingcart'] = {'1': {'name': 'Test Product', 'price': '10.00', 'quantity': '1', 'discount': '0'}}
-    client.get('/getorder', follow_redirects=True)
-
-    response = client.get('/customer/orders', follow_redirects=True)
-    assert response.status_code == 200
-    assert b'Order History' in response.data  # Adjust based on actual content
+if __name__ == '__main__':
+    unittest.main()

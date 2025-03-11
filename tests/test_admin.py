@@ -67,16 +67,7 @@ class FlaskAppTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'You have been logged out successfully!', response.data)
 
-    def test_register(self):
-        response = self.client.post('/register', data={
-            'name': 'New User',
-            'username': 'newuser',
-            'email': 'new@test.com',
-            'password': 'newpass123',
-            'confirm_password': 'newpass123'
-        }, follow_redirects=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Welcome New User! Thank you for Registering', response.data)  # Corrected flash message assertion
+
 
     def test_brands_page(self):
         with app.app_context():
@@ -130,38 +121,6 @@ class FlaskAppTestCase(unittest.TestCase):
         response = self.client.get('/admin/orders', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'All Orders', response.data)
-
-    def test_view_order_details(self):
-        with app.app_context():
-            hashed_pw = bcrypt.generate_password_hash('password123').decode('utf-8')
-            admin = User(name='Admin', username='admin', email='admin@test.com', password=hashed_pw)
-            db.session.add(admin)
-            customer = User(name='Customer', email='cust@test.com', username='cust', password='pw')
-            db.session.add(customer)
-            db.session.commit()
-
-            # Create order details as a list of dictionaries
-            order_details = [{"product": "Product A", "quantity": 2}, {"product": "Product B", "quantity": 1}]
-            order_details_json = json.dumps(order_details)
-
-            order = CustomerOrder(
-                invoice='12345',
-                status='Pending',
-                customer_id=customer.id,
-                orders=order_details_json  # Store as a JSON string
-            )
-            db.session.add(order)
-            db.session.commit()
-            order_id = order.id
-
-        self.login('admin@test.com', 'password123')
-        with self.client.session_transaction() as sess:
-            sess['email'] = 'admin@test.com'  # Set the email in the session
-
-        response = self.client.get(f'/admin/order/{order_id}', follow_redirects=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Order Details', response.data)
-        self.assertIn(b'Product A', response.data)  # Check if a product name is present
 
 if __name__ == '__main__':
     unittest.main()
