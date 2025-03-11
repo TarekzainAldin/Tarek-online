@@ -5,6 +5,7 @@ from.models import User
 from shop.products.models import Addproduct,Brand,Category
 from ..customer.models import CustomerOrder 
 import os 
+import json
 
 
 
@@ -83,11 +84,34 @@ def admin_orders():
 
     return render_template('admin/orders.html', title='All Orders', orders=orders)
 
+# @app.route('/admin/order/<int:order_id>')
+# def view_order(order_id):
+#     if 'email' not in session:
+#         flash('Please log in first!', 'danger')
+#         return redirect(url_for('login'))
+
+#     order = CustomerOrder.query.get_or_404(order_id)  # Get order by ID
+#     return render_template('admin/order_details.html', order=order)
 @app.route('/admin/order/<int:order_id>')
 def view_order(order_id):
+    # Check if admin is logged in. Handle if session is not active.
     if 'email' not in session:
         flash('Please log in first!', 'danger')
         return redirect(url_for('login'))
+    
+    order = CustomerOrder.query.get_or_404(order_id)
 
-    order = CustomerOrder.query.get_or_404(order_id)  # Get order by ID
-    return render_template('admin/order_details.html', order=order)
+    # Retrieve the customer by customer_id
+    customer = CustomerOrder.query.get(order.customer_id)  # Adjust this as per your actual model and field names
+    
+    # Check if order.orders is a string (then we can parse it)
+    if isinstance(order.orders, str):
+        try:
+            order_details = json.loads(order.orders)
+        except json.JSONDecodeError:
+            order_details = []
+    else:
+        order_details = order.orders if isinstance(order.orders, list) else []
+    
+    return render_template('admin/order_details.html', order=order, order_details=order_details, customer=customer)
+
