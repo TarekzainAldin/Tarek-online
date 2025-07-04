@@ -1,8 +1,6 @@
 Tarek online
 # E-Commerce Platform
 
-![E-Commerce Platform](https://via.placeholder.com/800x400?text=E-Commerce+Platform) <!-- Replace with actual screenshot -->
-
 A full-featured e-commerce platform built with Flask featuring product management, customer accounts, shopping cart, and Stripe payment integration.
 
 ## Table of Contents
@@ -72,5 +70,5 @@ A full-featured e-commerce platform built with Flask featuring product managemen
 ### Setup Instructions
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/ecommerce-flask.git
+   git clone https://github.com/TarekzainAldin/Tarek-online.git
    cd ecommerce-flask
