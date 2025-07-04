@@ -126,7 +126,7 @@ Endpoint	Method	Description
 
 
 
-   Customer Routes
+Customer Routes
 Endpoint	Method	Description
 /customer/register	GET,POST	Customer registration
 /customer/login	GET,POST	Customer login
